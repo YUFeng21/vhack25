@@ -2,16 +2,16 @@
 #include <PubSubClient.h>
 #include <DHT.h>
 
-// Function Prototypes (Fixes the "not declared" errors)
+// ✅ Function Prototypes
 void reconnectMQTT();
 void readAndSendData();
 
 // WiFi & MQTT Credentials
-const char* ssid = "Your-WiFi-SSID";  // Replace with your WiFi name
-const char* password = "Your-WiFi-Password";  // Replace with your WiFi password
-const char* mqttServer = "broker.hivemq.com";  // Public MQTT broker
+const char* ssid = "Wokwi-GUEST";  // Change to your WiFi SSID
+const char* password = "";  // Change to your WiFi password
+const char* mqttServer = "10.1.19.2";  // Change to your Mosquitto broker IP
 const int mqttPort = 1883;
-const char* mqttTopic = "farm/sensors";  // MQTT topic
+const char* mqttTopic = "farm/sensors";
 
 // Sensor Pins
 #define DHT_PIN 4
@@ -34,20 +34,20 @@ unsigned long buzzerStartTime = 0;
 void setup() {
     Serial.begin(115200);
 
-    // Connect to WiFi
+    // ✅ Connect to WiFi
     WiFi.begin(ssid, password);
     Serial.print("Connecting to WiFi...");
     while (WiFi.status() != WL_CONNECTED) {
         delay(1000);
         Serial.print(".");
     }
-    Serial.println("\nConnected to WiFi");
+    Serial.println("\n✅ Connected to WiFi");
 
-    // Connect to MQTT Broker
+    // ✅ Connect to MQTT Broker
     client.setServer(mqttServer, mqttPort);
-    reconnectMQTT();  // No longer causes error
+    reconnectMQTT();
 
-    // Initialize sensors
+    // ✅ Initialize sensors
     dht.begin();
     pinMode(BUZZER_PIN, OUTPUT);
     digitalWrite(BUZZER_PIN, LOW);
@@ -55,14 +55,14 @@ void setup() {
 
 void loop() {
     if (!client.connected()) {
-        reconnectMQTT();  // No longer causes error
+        reconnectMQTT();
     }
     client.loop();
 
     // Read sensor data at intervals
     if (millis() - lastReadTime >= readInterval) {
         lastReadTime = millis();
-        readAndSendData();  // No longer causes error
+        readAndSendData();
     }
 
     // Handle buzzer timing (non-blocking)
@@ -72,6 +72,7 @@ void loop() {
     }
 }
 
+// ✅ Read and Publish Sensor Data
 void readAndSendData() {
     float temperature = dht.readTemperature();
     float humidity = dht.readHumidity();
@@ -79,16 +80,16 @@ void readAndSendData() {
     int soilMoisture = analogRead(SOIL_MOISTURE_PIN);
 
     if (isnan(temperature) || isnan(humidity)) {
-        Serial.println("DHT sensor error! Skipping this reading...");
+        Serial.println("❌ DHT sensor error! Skipping this reading...");
         return;
     }
 
     int soilMoisturePercent = map(soilMoisture, 4095, 0, 0, 100);
 
-    Serial.print("Temp: "); Serial.print(temperature); Serial.print("°C, ");
-    Serial.print("Humidity: "); Serial.print(humidity); Serial.print("%, ");
-    Serial.print("Light: "); Serial.print(lightIntensity); Serial.print(", ");
-    Serial.print("Soil Moisture: "); Serial.print(soilMoisturePercent); Serial.println("%");
+    Serial.print("🌡 Temp: "); Serial.print(temperature); Serial.print("°C, ");
+    Serial.print("💧 Humidity: "); Serial.print(humidity); Serial.print("%, ");
+    Serial.print("☀️ Light: "); Serial.print(lightIntensity); Serial.print(", ");
+    Serial.print("🌱 Soil Moisture: "); Serial.print(soilMoisturePercent); Serial.println("%");
 
     String payload = "{";
     payload += "\"temperature\":" + String(temperature) + ",";
@@ -97,8 +98,13 @@ void readAndSendData() {
     payload += "\"soilMoisture\":" + String(soilMoisturePercent);
     payload += "}";
 
-    client.publish(mqttTopic, payload.c_str());
+    if (client.publish(mqttTopic, payload.c_str(), true)) {
+        Serial.println("✅ Data published to MQTT");
+    } else {
+        Serial.println("❌ Failed to publish data!");
+    }
 
+    // Activate buzzer if soil moisture is low
     if (soilMoisturePercent < 30) {
         digitalWrite(BUZZER_PIN, HIGH);
         buzzerOn = true;
@@ -106,13 +112,14 @@ void readAndSendData() {
     }
 }
 
+// ✅ Ensure MQTT Connection
 void reconnectMQTT() {
     while (!client.connected()) {
-        Serial.print("Connecting to MQTT...");
+        Serial.print("🔄 Connecting to MQTT...");
         if (client.connect("ESP32Client")) {
-            Serial.println("Connected to MQTT broker!");
+            Serial.println("✅ Connected to MQTT broker!");
         } else {
-            Serial.print("Failed, retrying in 5s...");
+            Serial.print("❌ Failed, retrying in 5s...");
             delay(5000);
         }
     }

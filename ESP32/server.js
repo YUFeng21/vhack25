@@ -1,14 +1,13 @@
 const mqtt = require('mqtt');
+const client = mqtt.connect('mqtt://broker.hivemq.com');
 
-// MQTT Broker Connection
-const mqttServer = "mqtt://broker.hivemq.com";
-const client = mqtt.connect(mqttServer);
-
-client.on("connect", () => {
-    console.log("Connected to MQTT broker!");
-    client.subscribe("farm/sensors");
+client.on('connect', () => {
+    console.log("Connected to MQTT Broker");
+    client.subscribe("farm/sensors", () => {
+        console.log("Subscribed to farm/sensors");
+    });
 });
 
-client.on("message", (topic, message) => {
-    console.log(`Received Data: ${message.toString()}`);
+client.on('message', (topic, message) => {
+    console.log(`Received data on ${topic}: ${message.toString()}`);
 });
