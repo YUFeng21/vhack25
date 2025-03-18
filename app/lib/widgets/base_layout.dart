@@ -66,6 +66,20 @@ class BaseLayout extends StatelessWidget {
                 Navigator.pushNamed(context, '/profile');
               },
             ),
+            ListTile(
+              leading: Icon(Icons.receipt),
+              title: Text('Receipts'),
+              onTap: () {
+                Navigator.pushNamed(context, '/receipts');
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.group),
+              title: Text('Social'),
+              onTap: () {
+                Navigator.pushNamed(context, '/social');
+              },
+            ),
           ],
         ),
       ),
@@ -77,12 +91,12 @@ class BaseLayout extends StatelessWidget {
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.content_copy),
-            label: 'Content 1',
+            icon: Icon(Icons.receipt),
+            label: 'Receipts',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.content_copy),
-            label: 'Content 2',
+            icon: Icon(Icons.group),
+            label: 'Social',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
@@ -91,16 +105,17 @@ class BaseLayout extends StatelessWidget {
         ],
         currentIndex: currentIndex,
         selectedItemColor: Colors.green,
+        unselectedItemColor: Colors.grey,
         onTap: (index) {
           switch (index) {
             case 0:
               Navigator.pushNamed(context, '/');
               break;
             case 1:
-              // Navigate to Content 1
+              Navigator.pushNamed(context, '/receipts');
               break;
             case 2:
-              // Navigate to Content 2
+              Navigator.pushNamed(context, '/social');
               break;
             case 3:
               Navigator.pushNamed(context, '/profile');
