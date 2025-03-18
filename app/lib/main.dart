@@ -8,6 +8,7 @@ import 'screens/receipts_screen.dart';
 import 'screens/social_screen.dart';
 import 'providers/user_provider.dart';
 import 'providers/post_provider.dart';
+import 'providers/ai_provider.dart';
 
 void main() {
   runApp(MyApp());
@@ -20,6 +21,7 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (context) => UserProvider()),
         ChangeNotifierProvider(create: (context) => PostProvider()),
+        ChangeNotifierProvider(create: (context) => AIProvider()),
       ],
       child: MaterialApp(
         title: 'Agriculture App',

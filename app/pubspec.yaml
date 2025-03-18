@@ -36,6 +36,7 @@ dependencies:
   cupertino_icons: ^1.0.8
   image_picker: ^0.8.4+4  # Ensure this is in the dependencies section
   provider: ^6.0.0 
+  http: ^0.13.3
 
 dev_dependencies:
   flutter_test:
