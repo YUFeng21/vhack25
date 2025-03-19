@@ -22,21 +22,26 @@ class AIProvider with ChangeNotifier {
     try {
       if (imageUrl != null) {
         // Sending image and question to the backend
-        var request = http.MultipartRequest('POST', Uri.parse('http://localhost:3000/process_image'));
+        var request = http.MultipartRequest('POST', Uri.parse('http://localhost:3000/send-data'));
         request.files.add(await http.MultipartFile.fromPath('image', imageUrl));
         request.fields['question'] = content;
         var response = await request.send();
         var responseData = await response.stream.bytesToString();
         var jsonResponse = json.decode(responseData);
-        _messages.add(Message(
-          sender: 'AI',
-          content: 'Type Plant: ${jsonResponse['type_plant']}, Environment: ${jsonResponse['environment']}, Suitable Soil: ${jsonResponse['suitable_soil']}, Watering Amount: ${jsonResponse['watering_amount']}',
-          imageUrl: null,
-        ));
+
+        if (response.statusCode == 200) {
+          _messages.add(Message(
+            sender: 'AI',
+            content: 'Type Plant: ${jsonResponse['type_plant']}, Environment: ${jsonResponse['environment']}, Suitable Soil: ${jsonResponse['suitable_soil']}, Watering Amount: ${jsonResponse['watering_amount']}',
+            imageUrl: null,
+          ));
+        } else {
+          _messages.add(Message(sender: 'AI', content: 'Error: ${jsonResponse['error']}', imageUrl: null));
+        }
       } else {
         // Sending question to the backend
         var response = await http.post(
-          Uri.parse('http://localhost:3000/process_text'),
+          Uri.parse('http://localhost:3000/send-data'),
           headers: {'Content-Type': 'application/json'},
           body: json.encode({'question': content}),
         );
@@ -50,6 +55,25 @@ class AIProvider with ChangeNotifier {
         } else {
           _messages.add(Message(sender: 'AI', content: 'Error: ${response.reasonPhrase}', imageUrl: null));
         }
+      }
+    } catch (e) {
+      _messages.add(Message(sender: 'AI', content: 'Error: $e', imageUrl: null));
+    }
+
+    notifyListeners();
+  }
+
+  Future<void> fetchData(String tableName) async {
+    try {
+      var response = await http.get(
+        Uri.parse('http://localhost:3000/get-data/$tableName'),
+        headers: {'Authorization': 'Bearer YOUR_JAMAI_API_KEY'},
+      );
+      if (response.statusCode == 200) {
+        var jsonResponse = json.decode(response.body);
+        // Process the fetched data as needed
+      } else {
+        _messages.add(Message(sender: 'AI', content: 'Error: ${response.reasonPhrase}', imageUrl: null));
       }
     } catch (e) {
       _messages.add(Message(sender: 'AI', content: 'Error: $e', imageUrl: null));

@@ -1,26 +1,34 @@
 const express = require('express');
 const multer = require('multer');
-const axios = require('axios');
 const dotenv = require('dotenv');
 const path = require('path');
 const fs = require('fs');
 const FormData = require('form-data');
-const cors = require('cors'); // Import cors at the top
+const cors = require('cors');
+const bodyParser = require('body-parser');
+const axios = require('axios');
 
 dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 3000;
 
-app.use(cors()); // Use cors middleware here
+app.use(cors());
+app.use(bodyParser.json());
 
 const JAMAI_API_URL = process.env.JAMAI_API_URL;
 const JAMAI_API_KEY = process.env.JAMAI_API_KEY;
-const JAMAI_PROJECT_ID = process.env.JAMAI_PROJECT_ID;
 
-app.use(express.json());
-
-const upload = multer({ dest: 'uploads/' });
+// Set up multer for image upload
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'C:/QYF/1/my_app/ai-backend/uploads/');
+  },
+  filename: (req, file, cb) => {
+    cb(null, `${Date.now()}-${file.originalname}`);
+  },
+});
+const upload = multer({ storage: storage });
 
 // Handle favicon request
 app.get('/favicon.ico', (req, res) => res.status(204));
@@ -30,69 +38,36 @@ app.get('/', (req, res) => {
   res.send('Welcome to the AI Backend');
 });
 
-// Route to process text
-app.post('/process_text', async (req, res) => {
-  const { question } = req.body;
-  try {
-    const response = await axios.post(
-      JAMAI_API_URL,
-      { question },
-      {
-        headers: {
-          'Authorization': `Bearer ${JAMAI_API_KEY}`,
-          'Content-Type': 'application/json',
-        },
-      }
-    );
-
-    // Assuming the response contains the required fields
-    const { type_plant, environment, suitable_soil, watering_amount } = response.data;
-
-    res.json({ type_plant, environment, suitable_soil, watering_amount });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// Route to process image
-app.post('/process_image', upload.single('image'), async (req, res) => {
+// Route to send data to JamAI
+app.post('/send-data', upload.single('image'), async (req, res) => {
   const image = req.file;
   const { question } = req.body;
   try {
+    if (!image || !question) {
+      return res.status(400).json({ error: "Missing required fields." });
+    }
+
     const formData = new FormData();
     formData.append('image', fs.createReadStream(image.path));
     formData.append('question', question);
 
     const response = await axios.post(
-      JAMAI_API_URL,
+      `${JAMAI_API_URL}/vhack25`,
       formData,
       {
         headers: {
           'Authorization': `Bearer ${JAMAI_API_KEY}`,
           'Content-Type': 'multipart/form-data',
         },
+        maxRedirects: 5, // Set the maximum number of redirects
       }
     );
 
-    // Assuming the response contains the required fields
     const { type_plant, environment, suitable_soil, watering_amount } = response.data;
 
-    res.json({ type_plant, environment, suitable_soil, watering_amount });
+    res.status(200).json({ type_plant, environment, suitable_soil, watering_amount });
   } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// Route to send data to JamAI
-app.post('/send-data', async (req, res) => {
-  try {
-    const { tableName, data } = req.body; // Example: { "tableName": "farming_responses", "data": { "question": "How to treat yellow leaves?", "answer": "Use nitrogen-rich fertilizer." } }
-    
-    // Insert data into JamAI
-    const response = await jamai.insert(tableName, data);
-    res.status(200).json({ message: "Data inserted successfully", response });
-  } catch (error) {
-    console.error("Error inserting data:", error);
+    console.error("Error inserting data:", error.response ? error.response.data : error.message);
     res.status(500).json({ error: "Failed to insert data" });
   }
 });
@@ -101,12 +76,20 @@ app.post('/send-data', async (req, res) => {
 app.get('/get-data/:tableName', async (req, res) => {
   try {
     const { tableName } = req.params;
-    
-    // Retrieve data from JamAI
-    const response = await jamai.get(tableName);
-    res.status(200).json(response);
+
+    const response = await axios.get(
+      `${JAMAI_API_URL}/${tableName}`,
+      {
+        headers: {
+          'Authorization': `Bearer ${JAMAI_API_KEY}`,
+        },
+        maxRedirects: 5, // Set the maximum number of redirects
+      }
+    );
+
+    res.status(200).json(response.data);
   } catch (error) {
-    console.error("Error fetching data:", error);
+    console.error("Error fetching data:", error.response ? error.response.data : error.message);
     res.status(500).json({ error: "Failed to fetch data" });
   }
 });
