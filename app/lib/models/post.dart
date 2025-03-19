@@ -1,8 +1,13 @@
 class Comment {
-  String username;
-  String content;
+  final String username;
+  final String content;
+  final DateTime timestamp;
 
-  Comment({required this.username, required this.content});
+  Comment({
+    required this.username,
+    required this.content,
+    required this.timestamp,
+  });
 }
 
 class Post {
@@ -11,7 +16,7 @@ class Post {
   final DateTime timestamp;
   final String? imageUrl;
   final int likes;
-  final int comments;
+  final List<Comment> comments;
 
   Post({
     required this.username,
@@ -19,6 +24,6 @@ class Post {
     required this.timestamp,
     this.imageUrl,
     this.likes = 0,
-    this.comments = 0,
-  });
+    List<Comment>? comments,
+  }) : comments = comments ?? [];
 }

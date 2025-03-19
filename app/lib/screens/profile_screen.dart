@@ -400,14 +400,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         Icons.lock_rounded,
                         () => _showChangePasswordDialog(context, userProvider),
                       ),
-                      SizedBox(height: 12),
-                      _buildActionButton(
-                        'Notifications',
-                        Icons.notifications_rounded,
-                        () {
-                          // Handle notifications
-                        },
-                      ),
                       SizedBox(height: 24),
                       ElevatedButton(
                         onPressed: () {

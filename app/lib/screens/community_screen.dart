@@ -36,6 +36,184 @@ class _CommunityScreenState extends State<CommunityScreen> {
     }
   }
 
+  void _showCommentDialog(BuildContext context, PostProvider postProvider, int postIndex) {
+    final commentController = TextEditingController();
+    
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Add Comment'),
+        content: TextField(
+          controller: commentController,
+          decoration: InputDecoration(
+            hintText: 'Write your comment...',
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+          maxLines: 3,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              if (commentController.text.isNotEmpty) {
+                final username = Provider.of<UserProvider>(context, listen: false).user.username;
+                postProvider.addComment(postIndex, username, commentController.text.trim());
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Comment added successfully!'),
+                    backgroundColor: Colors.green,
+                    behavior: SnackBarBehavior.floating,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                );
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.green,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            child: Text('Comment'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCommentSection(Post post, int postIndex, PostProvider postProvider) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Text(
+            'Comments (${post.comments.length})',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: Colors.grey[800],
+            ),
+          ),
+        ),
+        ListView.builder(
+          shrinkWrap: true,
+          physics: NeverScrollableScrollPhysics(),
+          itemCount: post.comments.length,
+          itemBuilder: (context, commentIndex) {
+            final comment = post.comments[commentIndex];
+            final currentUsername = Provider.of<UserProvider>(context).user.username;
+            final isCommentOwner = comment.username == currentUsername;
+
+            return Card(
+              margin: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+              child: ListTile(
+                title: Row(
+                  children: [
+                    Text(
+                      comment.username,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                      ),
+                    ),
+                    SizedBox(width: 8),
+                    Text(
+                      '• ${comment.timestamp.day}/${comment.timestamp.month}/${comment.timestamp.year}',
+                      style: TextStyle(
+                        color: Colors.grey[600],
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+                subtitle: Padding(
+                  padding: EdgeInsets.only(top: 4),
+                  child: Text(comment.content),
+                ),
+                trailing: isCommentOwner ? PopupMenuButton(
+                  itemBuilder: (context) => [
+                    PopupMenuItem(
+                      child: ListTile(
+                        leading: Icon(Icons.edit),
+                        title: Text('Edit'),
+                        contentPadding: EdgeInsets.zero,
+                        onTap: () {
+                          Navigator.pop(context);
+                          final editController = TextEditingController(text: comment.content);
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: Text('Edit Comment'),
+                              content: TextField(
+                                controller: editController,
+                                decoration: InputDecoration(
+                                  hintText: 'Edit your comment...',
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
+                                maxLines: 3,
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context),
+                                  child: Text('Cancel'),
+                                ),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    if (editController.text.isNotEmpty) {
+                                      postProvider.editComment(
+                                        postIndex,
+                                        commentIndex,
+                                        editController.text.trim(),
+                                      );
+                                      Navigator.pop(context);
+                                    }
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.green,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                  ),
+                                  child: Text('Save'),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    PopupMenuItem(
+                      child: ListTile(
+                        leading: Icon(Icons.delete, color: Colors.red),
+                        title: Text('Delete', style: TextStyle(color: Colors.red)),
+                        contentPadding: EdgeInsets.zero,
+                        onTap: () {
+                          Navigator.pop(context);
+                          postProvider.deleteComment(postIndex, commentIndex);
+                        },
+                      ),
+                    ),
+                  ],
+                ) : null,
+              ),
+            );
+          },
+        ),
+      ],
+    );
+  }
+
   Widget _buildCreatePost() {
     return Card(
       elevation: 2,
@@ -345,12 +523,13 @@ class _CommunityScreenState extends State<CommunityScreen> {
                                         ),
                                         TextButton.icon(
                                           icon: Icon(Icons.comment),
-                                          label: Text('${post.comments}'),
-                                          onPressed: () => postProvider.addComment(index),
+                                          label: Text('${post.comments.length}'),
+                                          onPressed: () => _showCommentDialog(context, postProvider, index),
                                         ),
                                       ],
                                     ),
                                   ),
+                                  _buildCommentSection(post, index, postProvider),
                                 ],
                               ),
                             );
