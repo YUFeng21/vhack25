@@ -1,3 +1,4 @@
+//post.dart
 class Comment {
   String username;
   String content;

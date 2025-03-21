@@ -1,19 +1,54 @@
+//user_provider.dart
 import 'package:flutter/material.dart';
 import '../models/user.dart';
-import 'dart:io';
 
 class UserProvider with ChangeNotifier {
-  User _user = User(username: '', email: '', password: '');
+  // Initialize the user with default values
+  User _user = User(
+    username: '',
+    email: '',
+    password: '',
+    fullName: '',
+    phone: '',
+    profilePicture: null,
+  );
 
+  // Getter for the user object
   User get user => _user;
 
-  void updateUser(String username, String email, String password, File? profileImage) {
-    _user = User(username: username, email: email, password: password, profileImage: profileImage);
+  // Getter for username (was missing implementation)
+  String get username => _user.username;
+
+  // Method to update the user details
+  void updateUser({
+    String? fullName,
+    String? username,
+    String? email,
+    String? phone,
+    String? password,
+    String? profilePicture,
+  }) {
+    _user = User(
+      fullName: fullName ?? _user.fullName,
+      username: username ?? _user.username,
+      email: email ?? _user.email,
+      phone: phone ?? _user.phone,
+      password: password ?? _user.password,
+      profilePicture: profilePicture ?? _user.profilePicture,
+    );
     notifyListeners();
   }
 
+  // Method to clear the user details (e.g., on logout)
   void clearUser() {
-    _user = User(username: '', email: '', password: '');
+    _user = User(
+      username: '',
+      email: '',
+      password: '',
+      fullName: '',
+      phone: '',
+      profilePicture: null,
+    );
     notifyListeners();
   }
 }
