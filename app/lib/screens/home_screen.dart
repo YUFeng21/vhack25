@@ -1,17 +1,35 @@
 import 'package:flutter/material.dart';
-import '../widgets/base_layout.dart';
+import 'package:provider/provider.dart';
+import '../providers/mqtt_provider.dart';
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+void main() {
+  runApp(MyApp());
+}
 
+class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return BaseLayout(
-      currentIndex: 0,
-      child: Center(
+    return ChangeNotifierProvider(
+      create: (context) => MqttProvider(),
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: MqttScreen(),
+      ),
+    );
+  }
+}
+
+class MqttScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final mqttProvider = Provider.of<MqttProvider>(context);
+
+    return Scaffold(
+      appBar: AppBar(title: Text('MQTT Data')),
+      body: Center(
         child: Text(
-          'Welcome to the Agriculture App!',
-          style: TextStyle(fontSize: 24),
+          mqttProvider.receivedMessage,
+          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
         ),
       ),
     );

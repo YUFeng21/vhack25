@@ -1,53 +1,57 @@
 #include <WiFi.h>
+#include <WiFiClientSecure.h>
 #include <PubSubClient.h>
 #include <DHT.h>
 
-// ✅ Function Prototypes
-void reconnectMQTT();
-void readAndSendData();
-
-// WiFi & MQTT Credentials
-const char* ssid = "Wokwi-GUEST";  // Change to your WiFi SSID
-const char* password = "";  // Change to your WiFi password
-const char* mqttServer = "10.1.19.2";  // Change to your Mosquitto broker IP
-const int mqttPort = 1883;
+// ✅ WiFi & MQTT Credentials
+const char* ssid = "Wokwi-GUEST";  
+const char* password = "";  
+const char* mqttServer = "3e3d3355c77f45dba1e9d2c236cef977.s1.eu.hivemq.cloud";  
+const int mqttPort = 8883;
+const char* mqttUser = "keanhoekoh1";
+const char* mqttPassword = "aA12345678";
 const char* mqttTopic = "farm/sensors";
 
-// Sensor Pins
+// ✅ Sensor Pins
 #define DHT_PIN 4
 #define DHT_TYPE DHT22
 #define LDR_PIN 34
 #define SOIL_MOISTURE_PIN 35
 #define BUZZER_PIN 5
 
-// Objects
-WiFiClient espClient;
+// ✅ Objects
+WiFiClientSecure espClient;  // Secure Client for SSL
 PubSubClient client(espClient);
 DHT dht(DHT_PIN, DHT_TYPE);
 
-// Variables
+// ✅ Variables
 unsigned long lastReadTime = 0;
-const int readInterval = 5000;  // Read every 5 seconds
+const int readInterval = 5000;
 bool buzzerOn = false;
 unsigned long buzzerStartTime = 0;
+
+void reconnectMQTT(); // Forward declaration
+void readAndSendData(); // Forward declaration
 
 void setup() {
     Serial.begin(115200);
 
     // ✅ Connect to WiFi
     WiFi.begin(ssid, password);
-    Serial.print("Connecting to WiFi...");
     while (WiFi.status() != WL_CONNECTED) {
         delay(1000);
         Serial.print(".");
     }
     Serial.println("\n✅ Connected to WiFi");
 
+    // ✅ Enable SSL (For Testing, Remove in Production)
+    espClient.setInsecure();
+
     // ✅ Connect to MQTT Broker
     client.setServer(mqttServer, mqttPort);
     reconnectMQTT();
 
-    // ✅ Initialize sensors
+    // ✅ Initialize Sensors
     dht.begin();
     pinMode(BUZZER_PIN, OUTPUT);
     digitalWrite(BUZZER_PIN, LOW);
@@ -59,13 +63,11 @@ void loop() {
     }
     client.loop();
 
-    // Read sensor data at intervals
     if (millis() - lastReadTime >= readInterval) {
         lastReadTime = millis();
         readAndSendData();
     }
 
-    // Handle buzzer timing (non-blocking)
     if (buzzerOn && millis() - buzzerStartTime >= 1000) {
         digitalWrite(BUZZER_PIN, LOW);
         buzzerOn = false;
@@ -86,10 +88,8 @@ void readAndSendData() {
 
     int soilMoisturePercent = map(soilMoisture, 4095, 0, 0, 100);
 
-    Serial.print("🌡 Temp: "); Serial.print(temperature); Serial.print("°C, ");
-    Serial.print("💧 Humidity: "); Serial.print(humidity); Serial.print("%, ");
-    Serial.print("☀️ Light: "); Serial.print(lightIntensity); Serial.print(", ");
-    Serial.print("🌱 Soil Moisture: "); Serial.print(soilMoisturePercent); Serial.println("%");
+    Serial.printf("🌡 Temp: %.1f°C, 💧 Humidity: %.1f%%, ☀️ Light: %d, 🌱 Soil Moisture: %d%%\n",
+                  temperature, humidity, lightIntensity, soilMoisturePercent);
 
     String payload = "{";
     payload += "\"temperature\":" + String(temperature) + ",";
@@ -104,7 +104,6 @@ void readAndSendData() {
         Serial.println("❌ Failed to publish data!");
     }
 
-    // Activate buzzer if soil moisture is low
     if (soilMoisturePercent < 30) {
         digitalWrite(BUZZER_PIN, HIGH);
         buzzerOn = true;
@@ -116,7 +115,7 @@ void readAndSendData() {
 void reconnectMQTT() {
     while (!client.connected()) {
         Serial.print("🔄 Connecting to MQTT...");
-        if (client.connect("ESP32Client")) {
+        if (client.connect("ESP32Client", mqttUser, mqttPassword)) {
             Serial.println("✅ Connected to MQTT broker!");
         } else {
             Serial.print("❌ Failed, retrying in 5s...");
