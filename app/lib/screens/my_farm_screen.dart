@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:provider/provider.dart';
 import '../providers/farm_data_provider.dart';
+import 'add_farm_screen.dart';
 
 class MyFarmScreen extends StatelessWidget {
   const MyFarmScreen({super.key});
@@ -15,7 +16,7 @@ class MyFarmScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('My Farms'),
-        backgroundColor: Color(0xFFDCECCF),
+        backgroundColor: const Color(0xFFDCECCF),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
@@ -26,7 +27,7 @@ class MyFarmScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 16),
+            const SizedBox(height: 8),
             Expanded(
               child: ListView.builder(
                 itemCount: farms.length,
@@ -52,13 +53,25 @@ class MyFarmScreen extends StatelessWidget {
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            // Fixed size for the image
                             ClipRRect(
                               borderRadius: BorderRadius.circular(8),
                               child: Image.asset(
-                                farm['image'],
-                                width: 100,
-                                height: 100,
-                                fit: BoxFit.cover,
+                                farm['image'], // Path to the image
+                                width: 100, // Fixed width
+                                height: 100, // Fixed height
+                                fit:
+                                    BoxFit
+                                        .cover, // Ensure the image fits properly
+                                errorBuilder: (context, error, stackTrace) {
+                                  // Fallback image in case of an error
+                                  return Image.asset(
+                                    'assets/images/fallback_image.png',
+                                    width: 100,
+                                    height: 100,
+                                    fit: BoxFit.cover,
+                                  );
+                                },
                               ),
                             ),
                             const SizedBox(width: 16),
@@ -72,6 +85,9 @@ class MyFarmScreen extends StatelessWidget {
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
                                     ),
+                                    overflow:
+                                        TextOverflow
+                                            .ellipsis, // Prevent overflow
                                   ),
                                   const SizedBox(height: 8),
                                   Row(
@@ -82,7 +98,18 @@ class MyFarmScreen extends StatelessWidget {
                                         color: Colors.grey,
                                       ),
                                       const SizedBox(width: 4),
-                                      Text(farm['location']),
+                                      Expanded(
+                                        child: Text(
+                                          farm['location'],
+                                          style: const TextStyle(
+                                            fontSize: 14,
+                                            color: Colors.grey,
+                                          ),
+                                          overflow:
+                                              TextOverflow
+                                                  .ellipsis, // Prevent overflow
+                                        ),
+                                      ),
                                     ],
                                   ),
                                   const SizedBox(height: 4),
@@ -94,7 +121,18 @@ class MyFarmScreen extends StatelessWidget {
                                         color: Colors.grey,
                                       ),
                                       const SizedBox(width: 4),
-                                      Text('Size: ${farm['size']}'),
+                                      Expanded(
+                                        child: Text(
+                                          'Size: ${farm['size']}',
+                                          style: const TextStyle(
+                                            fontSize: 14,
+                                            color: Colors.grey,
+                                          ),
+                                          overflow:
+                                              TextOverflow
+                                                  .ellipsis, // Prevent overflow
+                                        ),
+                                      ),
                                     ],
                                   ),
                                   const SizedBox(height: 8),
@@ -104,6 +142,9 @@ class MyFarmScreen extends StatelessWidget {
                                       fontSize: 14,
                                       color: Color(0xFFA3C585),
                                     ),
+                                    overflow:
+                                        TextOverflow
+                                            .ellipsis, // Prevent overflow
                                   ),
                                 ],
                               ),
@@ -121,11 +162,12 @@ class MyFarmScreen extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Add new farm feature coming soon!')),
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const AddFarmScreen()),
           );
         },
-        backgroundColor: Color(0xFFDCECCF),
+        backgroundColor: const Color(0xFFDCECCF),
         child: const Icon(Icons.add),
       ),
     );
@@ -193,7 +235,10 @@ class FarmDetailScreen extends StatelessWidget {
     ];
 
     return Scaffold(
-      appBar: AppBar(title: Text(farm['name'])),
+      appBar: AppBar(
+        title: Text(farm['name']),
+        backgroundColor: const Color(0xFFDCECCF),
+      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -224,6 +269,7 @@ class FarmDetailScreen extends StatelessWidget {
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
                           ),
+                          overflow: TextOverflow.ellipsis, // Prevent overflow
                         ),
                         const SizedBox(height: 8),
                         Row(
@@ -234,7 +280,17 @@ class FarmDetailScreen extends StatelessWidget {
                               color: Colors.grey,
                             ),
                             const SizedBox(width: 4),
-                            Text(farm['location']),
+                            Expanded(
+                              child: Text(
+                                farm['location'],
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey,
+                                ),
+                                overflow:
+                                    TextOverflow.ellipsis, // Prevent overflow
+                              ),
+                            ),
                           ],
                         ),
                         const SizedBox(height: 4),
@@ -246,7 +302,17 @@ class FarmDetailScreen extends StatelessWidget {
                               color: Colors.grey,
                             ),
                             const SizedBox(width: 4),
-                            Text('Size: ${farm['size']}'),
+                            Expanded(
+                              child: Text(
+                                'Size: ${farm['size']}',
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey,
+                                ),
+                                overflow:
+                                    TextOverflow.ellipsis, // Prevent overflow
+                              ),
+                            ),
                           ],
                         ),
                         const SizedBox(height: 8),
@@ -254,15 +320,15 @@ class FarmDetailScreen extends StatelessWidget {
                           'Crops: ${farm['crops'].join(', ')}',
                           style: const TextStyle(
                             fontSize: 14,
-                            color: Colors.green,
+                            color: Color(0xFFA3C585),
                           ),
+                          overflow: TextOverflow.ellipsis, // Prevent overflow
                         ),
                       ],
                     ),
                   ),
                 ],
               ),
-
               const SizedBox(height: 24),
 
               // Real-Time Monitoring Dashboard
@@ -319,9 +385,9 @@ class FarmDetailScreen extends StatelessWidget {
 
               const SizedBox(height: 24),
 
-              // Visual Graphs & Trends
+              // Visual Graphs
               const Text(
-                'Visual Graphs & Trends',
+                'Visual Graphs',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 16),
@@ -426,19 +492,19 @@ class FarmDetailScreen extends StatelessWidget {
 
               const SizedBox(height: 24),
 
-              // Management Options
+              // Farm Management
               const Text(
-                'Management Options',
+                'Farm Management',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 16),
 
-              // Management Option Buttons
+              // Farm Management Buttons
               _buildManagementOptionButton(
                 context,
                 'Smart Irrigation & Fertilization',
                 Icons.water_drop,
-                Colors.blue,
+                const Color.fromARGB(255, 105, 188, 255),
                 () => Navigator.pushNamed(context, '/smart_irrigation'),
               ),
               const SizedBox(height: 12),
@@ -446,7 +512,7 @@ class FarmDetailScreen extends StatelessWidget {
                 context,
                 'Eco-friendly Pest Control System',
                 Icons.pest_control,
-                Colors.green,
+                Color(0xFFA3C585),
                 () => Navigator.pushNamed(context, '/pest_control'),
               ),
               const SizedBox(height: 12),
@@ -454,7 +520,7 @@ class FarmDetailScreen extends StatelessWidget {
                 context,
                 'Precision Farming and Decision Support',
                 Icons.analytics,
-                Colors.purple,
+                const Color.fromARGB(255, 220, 168, 229),
                 () => Navigator.pushNamed(context, '/precision_farming'),
               ),
             ],

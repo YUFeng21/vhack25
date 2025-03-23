@@ -9,6 +9,7 @@ class PestControlScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Eco-friendly Pest Control'),
+        elevation: 0,
         backgroundColor: Color(0xFFDCECCF),
       ),
       body: SingleChildScrollView(
@@ -16,67 +17,70 @@ class PestControlScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header image
-            Container(
-              height: 200,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                color: Colors.green.withOpacity(0.2),
-              ),
-              child: Image.asset(
-                'assets/pest_control_banner.jpg',
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return const Center(
-                    child: Icon(
-                      Icons.pest_control,
-                      size: 80,
-                      color: Colors.green,
-                    ),
-                  );
-                },
+            // Header image with rounded corners
+            ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: Container(
+                height: 200,
+                width: double.infinity,
+                decoration: BoxDecoration(color: Colors.green.withOpacity(0.2)),
+                child: Image.asset(
+                  'assets/pest_control_banner.jpg',
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return const Center(
+                      child: Icon(
+                        Icons.pest_control,
+                        size: 80,
+                        color: Colors.green,
+                      ),
+                    );
+                  },
+                ),
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 24),
 
             // Overview section
-            const Text(
-              'Chemical-Free Pest Management',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            _buildSectionHeader(
+              title: 'Chemical-Free Pest Management',
+              icon: Icons.eco,
             ),
-            const SizedBox(height: 8),
-            const Text(
-              'Our eco-friendly pest control system combines enzyme-based pest control with frequency-based repellent technologies to protect your crops without harmful chemicals.',
-              style: TextStyle(fontSize: 16),
+            const Padding(
+              padding: EdgeInsets.only(left: 8, right: 8, top: 8, bottom: 4),
+              child: Text(
+                'Our eco-friendly pest control system combines enzyme-based pest control with frequency-based repellent technologies to protect your crops without harmful chemicals.',
+                style: TextStyle(fontSize: 16, height: 1.5),
+              ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 24),
 
             // Current status card
             Card(
-              elevation: 4,
+              elevation: 3,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(16),
               ),
               child: Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.all(20.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       children: [
                         Container(
-                          padding: const EdgeInsets.all(8),
+                          padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
                             color: Colors.green.withOpacity(0.2),
-                            borderRadius: BorderRadius.circular(8),
+                            borderRadius: BorderRadius.circular(12),
                           ),
                           child: const Icon(
                             Icons.check_circle,
                             color: Colors.green,
+                            size: 26,
                           ),
                         ),
-                        const SizedBox(width: 12),
+                        const SizedBox(width: 16),
                         const Text(
                           'System Status: Active',
                           style: TextStyle(
@@ -86,45 +90,24 @@ class PestControlScreen extends StatelessWidget {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 16),
-                    const Row(
+                    const SizedBox(height: 24),
+                    Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        Column(
-                          children: [
-                            Text(
-                              'Enzyme Dispenser',
-                              style: TextStyle(fontWeight: FontWeight.w500),
-                            ),
-                            SizedBox(height: 4),
-                            Text(
-                              '85%',
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.green,
-                              ),
-                            ),
-                            Text('Remaining'),
-                          ],
+                        _buildStatusItem(
+                          title: 'Enzyme Dispenser',
+                          value: '85%',
+                          subtitle: 'Remaining',
                         ),
-                        Column(
-                          children: [
-                            Text(
-                              'Frequency Emitter',
-                              style: TextStyle(fontWeight: FontWeight.w500),
-                            ),
-                            SizedBox(height: 4),
-                            Text(
-                              'Active',
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.green,
-                              ),
-                            ),
-                            Text('All zones'),
-                          ],
+                        Container(
+                          height: 55,
+                          width: 1,
+                          color: Colors.grey.withOpacity(0.3),
+                        ),
+                        _buildStatusItem(
+                          title: 'Frequency Emitter',
+                          value: 'Active',
+                          subtitle: 'All zones',
                         ),
                       ],
                     ),
@@ -132,12 +115,12 @@ class PestControlScreen extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 24),
 
             // Technologies section
-            const Text(
-              'Our Technologies',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            _buildSectionHeader(
+              title: 'Our Technologies',
+              icon: Icons.smart_toy,
             ),
             const SizedBox(height: 16),
 
@@ -169,14 +152,14 @@ class PestControlScreen extends StatelessWidget {
                 'Weather-resistant equipment',
               ],
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 24),
 
             // Pest detection history
-            const Text(
-              'Recent Pest Detections',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            _buildSectionHeader(
+              title: 'Recent Pest Detections',
+              icon: Icons.bug_report,
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 12),
 
             ListView.builder(
               shrinkWrap: true,
@@ -205,12 +188,31 @@ class PestControlScreen extends StatelessWidget {
                 ];
 
                 return Card(
-                  margin: const EdgeInsets.only(bottom: 8),
+                  margin: const EdgeInsets.only(bottom: 12),
+                  elevation: 2,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                   child: ListTile(
-                    leading: const Icon(Icons.bug_report, color: Colors.amber),
-                    title: Text(detections[index]['pest']),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
+                    ),
+                    leading: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.amber.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: const Icon(Icons.bug_report, color: Colors.amber),
+                    ),
+                    title: Text(
+                      detections[index]['pest'],
+                      style: const TextStyle(fontWeight: FontWeight.w600),
+                    ),
                     subtitle: Text(
                       '${detections[index]['date']} • ${detections[index]['location']}',
+                      style: const TextStyle(fontSize: 13),
                     ),
                     trailing: Chip(
                       label: Text(
@@ -218,15 +220,23 @@ class PestControlScreen extends StatelessWidget {
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 12,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 0,
+                      ),
                       backgroundColor: Colors.green,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
                     ),
                   ),
                 );
               },
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 24),
 
             // Control buttons
             Row(
@@ -234,10 +244,21 @@ class PestControlScreen extends StatelessWidget {
                 Expanded(
                   child: ElevatedButton.icon(
                     icon: const Icon(Icons.play_arrow),
-                    label: const Text('Activate All Systems'),
+                    label: const Text(
+                      'Activate All Systems',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                      ),
+                    ),
                     style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      padding: const EdgeInsets.symmetric(vertical: 16),
                       backgroundColor: Color(0xFFA3C585),
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      elevation: 2,
                     ),
                     onPressed: () {
                       ScaffoldMessenger.of(context).showSnackBar(
@@ -246,14 +267,25 @@ class PestControlScreen extends StatelessWidget {
                     },
                   ),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: 16),
                 Expanded(
                   child: ElevatedButton.icon(
                     icon: const Icon(Icons.schedule),
-                    label: const Text('Schedule Treatment'),
+                    label: const Text(
+                      'Schedule Treatment',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                      ),
+                    ),
                     style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      padding: const EdgeInsets.symmetric(vertical: 16),
                       backgroundColor: const Color.fromARGB(255, 105, 188, 255),
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      elevation: 2,
                     ),
                     onPressed: () {
                       ScaffoldMessenger.of(context).showSnackBar(
@@ -264,9 +296,55 @@ class PestControlScreen extends StatelessWidget {
                 ),
               ],
             ),
+            const SizedBox(height: 16),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildSectionHeader({required String title, required IconData icon}) {
+    return Row(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: Colors.green.withOpacity(0.2),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Icon(icon, color: Colors.green, size: 22),
+        ),
+        const SizedBox(width: 12),
+        Text(
+          title,
+          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildStatusItem({
+    required String title,
+    required String value,
+    required String subtitle,
+  }) {
+    return Column(
+      children: [
+        Text(
+          title,
+          style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 15),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          value,
+          style: const TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+            color: Colors.green,
+          ),
+        ),
+        Text(subtitle, style: TextStyle(fontSize: 13, color: Colors.grey[600])),
+      ],
     );
   }
 
@@ -278,23 +356,23 @@ class PestControlScreen extends StatelessWidget {
   }) {
     return Card(
       elevation: 3,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(8),
+                  padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     color: Colors.green.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Icon(icon, color: Colors.green),
+                  child: Icon(icon, color: Colors.green, size: 24),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: 16),
                 Expanded(
                   child: Text(
                     title,
@@ -306,31 +384,42 @@ class PestControlScreen extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 8),
-            Text(description, style: const TextStyle(fontSize: 14)),
-            const SizedBox(height: 12),
+            const SizedBox(height: 16),
+            Text(
+              description,
+              style: const TextStyle(fontSize: 15, height: 1.4),
+            ),
+            const SizedBox(height: 16),
             const Text(
               'Benefits:',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: 8),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children:
                   benefits
                       .map(
                         (benefit) => Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 2),
+                          padding: const EdgeInsets.symmetric(vertical: 4),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               const Icon(
                                 Icons.check_circle,
                                 color: Colors.green,
-                                size: 16,
+                                size: 18,
                               ),
-                              const SizedBox(width: 8),
-                              Expanded(child: Text(benefit)),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: Text(
+                                  benefit,
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    height: 1.3,
+                                  ),
+                                ),
+                              ),
                             ],
                           ),
                         ),

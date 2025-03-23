@@ -112,7 +112,7 @@ class _PrecisionFarmingScreenState extends State<PrecisionFarmingScreen>
                     padding: const EdgeInsets.all(8),
                     child: Center(
                       child: Image.asset(
-                        'assets/growth_prediction.png', // Replace with an actual growth chart image
+                        'assets/growth_prediction.jpg',
                         fit: BoxFit.contain,
                       ),
                     ),
@@ -483,7 +483,7 @@ class _PrecisionFarmingScreenState extends State<PrecisionFarmingScreen>
                                 ),
                               );
                             },
-                            activeColor: Colors.green,
+                            activeColor: Color(0xFFA3C585),
                           ),
                         ],
                       ),
@@ -499,7 +499,7 @@ class _PrecisionFarmingScreenState extends State<PrecisionFarmingScreen>
                           );
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green,
+                          backgroundColor: Color(0xFFA3C585),
                           foregroundColor: Colors.white,
                         ),
                         child: const Text('Configure'),
@@ -595,35 +595,38 @@ class _PrecisionFarmingScreenState extends State<PrecisionFarmingScreen>
           const SizedBox(height: 24),
 
           // Alert Summary Cards
-          Row(
-            children: [
-              Expanded(
-                child: _buildAlertSummaryCard(
-                  'High Priority',
-                  '1',
-                  Colors.red,
-                  Icons.warning_rounded,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: _buildAlertSummaryCard(
-                  'Medium Priority',
-                  '2',
-                  Colors.orange,
-                  Icons.info_outline,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: _buildAlertSummaryCard(
-                  'Low Priority',
-                  '2',
-                  Colors.green,
-                  Icons.check_circle_outline,
-                ),
-              ),
-            ],
+          LayoutBuilder(
+            builder: (context, constraints) {
+              double cardWidth = (constraints.maxWidth - 24) / 3;
+
+              return Row(
+                children: [
+                  _buildAlertSummaryCard(
+                    'High Priority',
+                    '1',
+                    Colors.red,
+                    Icons.warning_rounded,
+                    width: cardWidth,
+                  ),
+                  const SizedBox(width: 12),
+                  _buildAlertSummaryCard(
+                    'Medium Priority',
+                    '2',
+                    Colors.orange,
+                    Icons.info_outline,
+                    width: cardWidth,
+                  ),
+                  const SizedBox(width: 12),
+                  _buildAlertSummaryCard(
+                    'Low Priority',
+                    '2',
+                    Colors.green,
+                    Icons.check_circle_outline,
+                    width: cardWidth,
+                  ),
+                ],
+              );
+            },
           ),
 
           const SizedBox(height: 24),
@@ -733,7 +736,7 @@ class _PrecisionFarmingScreenState extends State<PrecisionFarmingScreen>
               },
               icon: const Icon(Icons.settings, size: 20),
               label: const Text('Configure Alert Settings'),
-              style: TextButton.styleFrom(foregroundColor: Colors.green),
+              style: TextButton.styleFrom(foregroundColor: Color(0xFFA3C585)),
             ),
           ),
         ],
@@ -745,37 +748,38 @@ class _PrecisionFarmingScreenState extends State<PrecisionFarmingScreen>
     String title,
     String count,
     Color color,
-    IconData icon,
-  ) {
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(icon, color: color),
-                const SizedBox(width: 8),
-                Text(
-                  title,
-                  style: TextStyle(color: color, fontWeight: FontWeight.bold),
-                ),
-              ],
+    IconData icon, {
+    double? width,
+  }) {
+    return Container(
+      width: width,
+      height: 100, // Fixed height for consistency
+      padding: const EdgeInsets.all(12.0),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: color.withOpacity(0.4)),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(icon, color: color, size: 28),
+          const SizedBox(height: 8),
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+              color: color,
             ),
-            const SizedBox(height: 8),
-            Text(
-              count,
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: color,
-              ),
-            ),
-          ],
-        ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 4),
+          Text(
+            '$count Alert${count == '1' ? '' : 's'}',
+            style: const TextStyle(fontSize: 11),
+          ),
+        ],
       ),
     );
   }

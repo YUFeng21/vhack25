@@ -27,7 +27,7 @@ class AppDrawer extends StatelessWidget {
           ),
           ListTile(
             leading: const Icon(Icons.agriculture),
-            title: const Text('My Farm'),
+            title: const Text('My Farms'),
             onTap: () {
               Navigator.pop(context); // Close the drawer first
               Navigator.pushNamed(context, '/farm');

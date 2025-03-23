@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/farm_data_provider.dart';
+import 'add_crop_screen.dart';
 
 class MyCropsScreen extends StatelessWidget {
   const MyCropsScreen({super.key});
@@ -161,11 +162,12 @@ class MyCropsScreen extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Add new crop feature coming soon!')),
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const AddCropScreen()),
           );
         },
-        backgroundColor: Colors.green,
+        backgroundColor: Color(0xFFDCECCF),
         child: const Icon(Icons.add),
       ),
     );
@@ -455,7 +457,7 @@ class CropDetailScreen extends StatelessWidget {
                             );
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.green,
+                            backgroundColor: Color(0xFFA3C585),
                             foregroundColor: Colors.white,
                             padding: const EdgeInsets.symmetric(vertical: 16),
                             shape: RoundedRectangleBorder(
@@ -463,7 +465,7 @@ class CropDetailScreen extends StatelessWidget {
                             ),
                           ),
                           child: const Text(
-                            'View Detailed Health Analysis',
+                            'Detailed Health Analysis',
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
                         ),

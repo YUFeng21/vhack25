@@ -316,16 +316,16 @@ class HomeContent extends StatelessWidget {
               'Farm News Today',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 24),
             SizedBox(
-              height: 160,
+              height: 180,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 itemCount: farmData.farmNews.length,
                 itemBuilder: (context, index) {
                   final news = farmData.farmNews[index];
                   return Padding(
-                    padding: const EdgeInsets.only(right: 12.0),
+                    padding: const EdgeInsets.only(right: 24.0),
                     child: _buildNewsCard(news),
                   );
                 },

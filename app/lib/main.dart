@@ -35,7 +35,21 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        theme: ThemeData(primaryColor: const Color(0xFFA3C585)),
+        theme: ThemeData(
+          primaryColor: const Color(0xFFA3C585),
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: const Color(0xFFA3C585),
+            primary: const Color(0xFFA3C585),
+            secondary: const Color(0xFF0B6E4F),
+          ),
+          scaffoldBackgroundColor: Colors.white,
+          elevatedButtonTheme: ElevatedButtonThemeData(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFFA3C585),
+              foregroundColor: Colors.white,
+            ),
+          ),
+        ),
         home: const SplashScreen(),
         routes: {
           '/home': (context) => const HomeScreen(),
@@ -71,7 +85,7 @@ class _SplashScreenState extends State<SplashScreen> {
     Future.delayed(const Duration(seconds: 2), () {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const HomeScreen()),
+        MaterialPageRoute(builder: (context) => SignInScreen()),
       );
     });
   }
@@ -79,13 +93,16 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFDCECCF), // Set background color
+      backgroundColor: const Color(0xFFDCECCF), // Set background color
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image.asset('assets/logo.png', width: 150), // App logo
             const SizedBox(height: 20),
+            const CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFA3C585)),
+            ),
           ],
         ),
       ),

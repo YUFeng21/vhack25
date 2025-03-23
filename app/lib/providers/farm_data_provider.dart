@@ -1,5 +1,8 @@
 // farm_data_provider.dart
+import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 
 class FarmDataProvider with ChangeNotifier {
   // Weather data
@@ -59,6 +62,7 @@ class FarmDataProvider with ChangeNotifier {
       'status': 'Growing',
       'health': 'Good',
       'image': 'assets/crop1.jpg',
+      'isWebImage': false,
       'healthScore': 85,
       'diseaseRisk': 'Low',
       'growthStage': 'Vegetative',
@@ -77,6 +81,7 @@ class FarmDataProvider with ChangeNotifier {
       'status': 'Flowering',
       'health': 'Good',
       'image': 'assets/crop2.jpg',
+      'isWebImage': false,
       'healthScore': 88,
       'diseaseRisk': 'Low',
       'growthStage': 'Flowering',
@@ -95,6 +100,7 @@ class FarmDataProvider with ChangeNotifier {
       'status': 'Seedling',
       'health': 'Fair',
       'image': 'assets/crop3.jpg',
+      'isWebImage': false,
       'healthScore': 72,
       'diseaseRisk': 'Moderate',
       'growthStage': 'Early vegetative',
@@ -151,5 +157,122 @@ class FarmDataProvider with ChangeNotifier {
       return _crops[index];
     }
     return {};
+  }
+
+  // Add a new farm
+  void addFarm(Map<String, dynamic> farm) {
+    _farms.add(farm);
+    notifyListeners();
+  }
+
+  // Add a new crop
+  void addCrop(Map<String, dynamic> crop) {
+    _crops.add(crop);
+
+    // Also update the crops list for the associated farm
+    for (final farm in _farms) {
+      if (farm['name'] == crop['farm']) {
+        if (!farm['crops'].contains(crop['name'])) {
+          farm['crops'].add(crop['name']);
+        }
+        break;
+      }
+    }
+
+    notifyListeners();
+  }
+
+  // Helper method to get the appropriate image widget for a crop
+  Widget getCropImage(Map<String, dynamic> crop) {
+    // If no image data is available, show a placeholder
+    if (crop['image'] == null) {
+      return const Center(
+        child: Icon(Icons.image_not_supported, size: 50, color: Colors.grey),
+      );
+    }
+
+    // Check if it's a web image
+    if (crop['isWebImage'] == true) {
+      // For web platform, use the stored image bytes
+      if (crop['imageBytes'] != null) {
+        return Image.memory(
+          crop['imageBytes'] as Uint8List,
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) {
+            return const Center(
+              child: Icon(Icons.broken_image, size: 50, color: Colors.grey),
+            );
+          },
+        );
+      } else {
+        // Fallback if imageBytes is not available
+        return const Center(
+          child: Icon(Icons.image_not_supported, size: 50, color: Colors.grey),
+        );
+      }
+    } else {
+      // Check if it's an asset image (for predefined crops)
+      if (crop['image'].toString().startsWith('assets/')) {
+        return Image.asset(
+          crop['image'],
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) {
+            return const Center(
+              child: Icon(Icons.broken_image, size: 50, color: Colors.grey),
+            );
+          },
+        );
+      } else {
+        // For mobile platform, use File to load the image
+        try {
+          return Image.file(
+            File(crop['image']),
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) {
+              return const Center(
+                child: Icon(Icons.broken_image, size: 50, color: Colors.grey),
+              );
+            },
+          );
+        } catch (e) {
+          return const Center(
+            child: Icon(Icons.error_outline, size: 50, color: Colors.red),
+          );
+        }
+      }
+    }
+  }
+
+  // Helper method for farm images
+  Widget getFarmImage(Map<String, dynamic> farm) {
+    // Farm images are typically assets
+    if (farm['image'].toString().startsWith('assets/')) {
+      return Image.asset(
+        farm['image'],
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) {
+          return const Center(
+            child: Icon(Icons.broken_image, size: 50, color: Colors.grey),
+          );
+        },
+      );
+    } else {
+      // If it's a user-added farm with a file image
+      try {
+        return Image.file(
+          File(farm['image']),
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) {
+            return const Center(
+              child: Icon(Icons.broken_image, size: 50, color: Colors.grey),
+            );
+          },
+        );
+      } catch (e) {
+        return const Center(
+          child: Icon(Icons.error_outline, size: 50, color: Colors.red),
+        );
+      }
+    }
   }
 }

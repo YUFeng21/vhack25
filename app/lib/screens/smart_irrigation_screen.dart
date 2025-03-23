@@ -9,6 +9,7 @@ class SmartIrrigationScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Smart Irrigation & Fertilization'),
+        elevation: 0,
         backgroundColor: Color(0xFFDCECCF),
       ),
       body: SingleChildScrollView(
@@ -16,35 +17,35 @@ class SmartIrrigationScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header image
-            Container(
-              height: 200,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                color: Colors.green.withOpacity(0.2),
-              ),
-              child: Image.asset(
-                'assets/irrigation_banner.png',
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Center(
-                    child: Icon(
-                      Icons.water_drop,
-                      size: 80,
-                      color: Colors.green,
-                    ),
-                  );
-                },
+            // Header image with rounded corners
+            ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: Container(
+                height: 200,
+                width: double.infinity,
+                decoration: BoxDecoration(color: Colors.green.withOpacity(0.2)),
+                child: Image.asset(
+                  'assets/irrigation_banner.png',
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Center(
+                      child: Icon(
+                        Icons.water_drop,
+                        size: 80,
+                        color: Colors.green,
+                      ),
+                    );
+                  },
+                ),
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 24),
 
             // Section: Water Optimization
             _buildSection(
               title: 'Water Optimization',
               content:
-                  'Our smart irrigation system analyzes real-time soil moisture, weather forecasts, and crop water requirements to deliver precisely the right amount of water at the right time.',
+                  'Analyze real-time soil moisture, weather forecasts, and crop water requirements to deliver precisely the right amount of water at the right time.',
               icon: Icons.water_drop,
             ),
 
@@ -65,56 +66,64 @@ class SmartIrrigationScreen extends StatelessWidget {
               color: Colors.green,
             ),
 
-            const SizedBox(height: 20),
+            const SizedBox(height: 24),
 
             // Section: Fertilization
             _buildSection(
               title: 'Smart Fertilization',
               content:
-                  'Based on soil tests and plant nutrient needs, our system provides customized fertilizer recommendations to ensure optimal growth while minimizing chemical usage.',
+                  'Personalized fertilizer advice based on soil tests and plant needs to boost growth and reduce chemical use.',
               icon: Icons.eco,
             ),
 
             // Fertilizer recommendation card
             Card(
-              elevation: 4,
+              elevation: 3,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(16),
               ),
               child: Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.all(20.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       'Current Fertilizer Recommendation',
                       style: TextStyle(
-                        fontSize: 16,
+                        fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    const SizedBox(height: 12),
-                    ListTile(
-                      leading: Icon(Icons.nature, color: Colors.green),
-                      title: Text('Nitrogen (N)'),
-                      subtitle: Text('20 kg/acre - Apply within 5 days'),
+                    const SizedBox(height: 16),
+                    _buildFertilizerItem(
+                      icon: Icons.nature,
+                      color: Colors.green,
+                      title: 'Nitrogen (N)',
+                      subtitle: 'Apply within 5 days',
+                      value: '20 kg/acre',
                     ),
-                    ListTile(
-                      leading: Icon(Icons.nature, color: Colors.brown),
-                      title: Text('Phosphorus (P)'),
-                      subtitle: Text('15 kg/acre - Current levels optimal'),
+                    const Divider(height: 24),
+                    _buildFertilizerItem(
+                      icon: Icons.nature,
+                      color: Colors.brown,
+                      title: 'Phosphorus (P)',
+                      subtitle: 'Current levels optimal',
+                      value: '15 kg/acre',
                     ),
-                    ListTile(
-                      leading: Icon(Icons.nature, color: Colors.purple),
-                      title: Text('Potassium (K)'),
-                      subtitle: Text('25 kg/acre - Apply within 3 days'),
+                    const Divider(height: 24),
+                    _buildFertilizerItem(
+                      icon: Icons.nature,
+                      color: Colors.purple,
+                      title: 'Potassium (K)',
+                      subtitle: 'Apply within 3 days',
+                      value: '25 kg/acre',
                     ),
                   ],
                 ),
               ),
             ),
 
-            const SizedBox(height: 20),
+            const SizedBox(height: 24),
 
             // Action buttons
             Row(
@@ -122,10 +131,21 @@ class SmartIrrigationScreen extends StatelessWidget {
                 Expanded(
                   child: ElevatedButton.icon(
                     icon: const Icon(Icons.play_arrow),
-                    label: const Text('Start Irrigation'),
+                    label: const Text(
+                      'Start Irrigation',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
                     style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      backgroundColor: const Color.fromARGB(255, 105, 188, 255),
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      backgroundColor: Color(0xFFA3C585),
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      elevation: 2,
                     ),
                     onPressed: () {
                       ScaffoldMessenger.of(context).showSnackBar(
@@ -134,14 +154,25 @@ class SmartIrrigationScreen extends StatelessWidget {
                     },
                   ),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: 16),
                 Expanded(
                   child: ElevatedButton.icon(
                     icon: const Icon(Icons.schedule),
-                    label: const Text('Schedule'),
+                    label: const Text(
+                      'Schedule',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
                     style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      backgroundColor: Color(0xFFA3C585),
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      backgroundColor: const Color.fromARGB(255, 105, 188, 255),
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      elevation: 2,
                     ),
                     onPressed: () {
                       ScaffoldMessenger.of(context).showSnackBar(
@@ -152,6 +183,7 @@ class SmartIrrigationScreen extends StatelessWidget {
                 ),
               ],
             ),
+            const SizedBox(height: 16),
           ],
         ),
       ),
@@ -163,23 +195,41 @@ class SmartIrrigationScreen extends StatelessWidget {
     required String content,
     required IconData icon,
   }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Icon(icon, color: Colors.green),
-            const SizedBox(width: 8),
-            Text(
-              title,
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+    return Container(
+      margin: const EdgeInsets.only(bottom: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.green.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(icon, color: Colors.green, size: 24),
+              ),
+              const SizedBox(width: 12),
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Padding(
+            padding: const EdgeInsets.only(left: 8),
+            child: Text(
+              content,
+              style: const TextStyle(fontSize: 16, height: 1.5),
             ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        Text(content, style: const TextStyle(fontSize: 16)),
-        const SizedBox(height: 16),
-      ],
+          ),
+        ],
+      ),
     );
   }
 
@@ -191,22 +241,22 @@ class SmartIrrigationScreen extends StatelessWidget {
     required Color color,
   }) {
     return Card(
-      elevation: 3,
+      elevation: 2,
       margin: const EdgeInsets.only(bottom: 16),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(20.0),
         child: Row(
           children: [
             Container(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
                 color: color.withOpacity(0.2),
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(14),
               ),
               child: Icon(icon, color: color, size: 36),
             ),
-            const SizedBox(width: 16),
+            const SizedBox(width: 20),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -214,20 +264,23 @@ class SmartIrrigationScreen extends StatelessWidget {
                   Text(
                     title,
                     style: const TextStyle(
-                      fontSize: 14,
+                      fontSize: 15,
                       fontWeight: FontWeight.w500,
+                      color: Colors.black87,
                     ),
                   ),
+                  const SizedBox(height: 4),
                   Text(
                     value,
                     style: const TextStyle(
-                      fontSize: 22,
+                      fontSize: 24,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
+                  const SizedBox(height: 2),
                   Text(
                     subtitle,
-                    style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                    style: TextStyle(fontSize: 13, color: Colors.grey[600]),
                   ),
                 ],
               ),
@@ -235,6 +288,55 @@ class SmartIrrigationScreen extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildFertilizerItem({
+    required IconData icon,
+    required Color color,
+    required String title,
+    required String subtitle,
+    required String value,
+  }) {
+    return Row(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: color.withOpacity(0.2),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Icon(icon, color: color, size: 24),
+        ),
+        const SizedBox(width: 16),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                subtitle,
+                style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+              ),
+            ],
+          ),
+        ),
+        Text(
+          value,
+          style: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+            color: Colors.black87,
+          ),
+        ),
+      ],
     );
   }
 }
