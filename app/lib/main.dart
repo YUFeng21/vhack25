@@ -8,9 +8,15 @@ import 'screens/chat_screen.dart';
 import 'screens/community_screen.dart';
 import 'providers/user_provider.dart';
 import 'providers/post_provider.dart';
-import 'providers/ai_provider.dart';
+import 'providers/plant_provider.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-void main() {
+void main() async {
+  // Ensure that the Flutter binding is initialized
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  // Load the .env file from the assets directory
+  await dotenv.load(fileName: "assets/.env"); // Correct the path if necessary
   runApp(MyApp());
 }
 
@@ -23,7 +29,7 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (context) => UserProvider()),
         ChangeNotifierProvider(create: (context) => PostProvider()),
-        ChangeNotifierProvider(create: (context) => AIProvider()),
+        ChangeNotifierProvider(create: (context) => PlantProvider()),
       ],
       child: MaterialApp(
         title: 'Agriculture App',

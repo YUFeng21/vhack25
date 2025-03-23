@@ -18,6 +18,7 @@ class HomeScreen extends StatelessWidget {
           padding: EdgeInsets.all(16),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
             children: [
               Container(
                 padding: EdgeInsets.all(12),
@@ -40,6 +41,8 @@ class HomeScreen extends StatelessWidget {
                   color: Colors.grey.shade900,
                 ),
                 textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
               SizedBox(height: 8),
               Text(
@@ -49,6 +52,8 @@ class HomeScreen extends StatelessWidget {
                   color: Colors.grey.shade600,
                 ),
                 textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
             ],
           ),
