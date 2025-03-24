@@ -1,21 +1,28 @@
 //post.dart
 class Comment {
-  String username;
-  String content;
+  final String username;
+  final String content;
+  final DateTime timestamp;
 
-  Comment({required this.username, required this.content});
+  Comment({
+    required this.username,
+    required this.content,
+    required this.timestamp,
+  });
 }
 
 class Post {
-  String username;
-  String content;
-  String? imageUrl;
-  int likes;
-  List<Comment> comments;
+  final String username;
+  final String content;
+  final DateTime timestamp;
+  final String? imageUrl;
+  final int likes;
+  final List<Comment> comments;
 
   Post({
     required this.username,
     required this.content,
+    required this.timestamp,
     this.imageUrl,
     this.likes = 0,
     List<Comment>? comments,

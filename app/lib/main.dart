@@ -7,6 +7,8 @@ import 'screens/home_screen.dart';
 import 'screens/sign_in_screen.dart';
 import 'screens/sign_up_screen.dart';
 import 'screens/profile_screen.dart';
+import 'screens/chat_screen.dart';
+import 'screens/community_screen.dart';
 import 'screens/chatbot_screen.dart';
 import 'screens/social_screen.dart';
 import 'screens/my_farm_screen.dart';
@@ -18,7 +20,16 @@ import 'screens/crop_health_screen.dart';
 import 'providers/farm_data_provider.dart';
 import 'providers/user_provider.dart';
 import 'providers/post_provider.dart';
+import 'providers/plant_provider.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
+void main() async {
+  // Ensure that the Flutter binding is initialized
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  // Load the .env file from the assets directory
+  await dotenv.load(fileName: "assets/.env"); // Correct the path if necessary
+  runApp(MyApp());
 void main() {
   runApp(
     ChangeNotifierProvider(
@@ -39,10 +50,15 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => PostProvider()),
         ChangeNotifierProvider(create: (context) => FarmDataProvider()),
         ChangeNotifierProvider(create: (context) => MqttService()..connect()),
+        ChangeNotifierProvider(create: (context) => PlantProvider()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
+          primarySwatch: Colors.green,
+          useMaterial3: true,
+        ),
+        initialRoute: '/',
           primaryColor: const Color(0xFFA3C585),
           colorScheme: ColorScheme.fromSeed(
             seedColor: const Color(0xFFA3C585),
@@ -71,6 +87,10 @@ class MyApp extends StatelessWidget {
           '/pest_control': (context) => const PestControlScreen(),
           '/precision_farming': (context) => const PrecisionFarmingScreen(),
           '/crop_health': (context) => const CropHealthScreen(),
+          '/sign-up': (context) => SignUpScreen(),
+          '/profile': (context) => ProfileScreen(),
+          '/chat': (context) => ChatScreen(),
+          '/community': (context) => CommunityScreen(),
         },
       ),
     );
