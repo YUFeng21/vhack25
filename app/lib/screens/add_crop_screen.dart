@@ -23,7 +23,6 @@ class _AddCropScreenState extends State<AddCropScreen> {
   String? _selectedFarm;
   DateTime _plantingDate = DateTime.now();
 
-  // Modified to handle both web and mobile platforms
   File? _imageFile;
   String? _webImagePath;
   XFile? _pickedFile;
@@ -58,7 +57,7 @@ class _AddCropScreenState extends State<AddCropScreen> {
       if (pickedFile != null) {
         setState(() {
           _pickedFile = pickedFile;
-          _webImagePath = pickedFile.path; // Store the web path
+          _webImagePath = pickedFile.path;
         });
       }
     } else {

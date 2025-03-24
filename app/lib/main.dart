@@ -81,7 +81,6 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    // Navigate to the main app after 2 seconds
     Future.delayed(const Duration(seconds: 2), () {
       Navigator.pushReplacement(
         context,
@@ -93,12 +92,12 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFDCECCF), // Set background color
+      backgroundColor: const Color(0xFFDCECCF),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset('assets/logo.png', width: 150), // App logo
+            Image.asset('assets/logo.png', width: 150),
             const SizedBox(height: 20),
             const CircularProgressIndicator(
               valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFA3C585)),

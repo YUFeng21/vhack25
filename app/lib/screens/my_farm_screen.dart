@@ -53,18 +53,14 @@ class MyFarmScreen extends StatelessWidget {
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            // Fixed size for the image
                             ClipRRect(
                               borderRadius: BorderRadius.circular(8),
                               child: Image.asset(
-                                farm['image'], // Path to the image
-                                width: 100, // Fixed width
-                                height: 100, // Fixed height
-                                fit:
-                                    BoxFit
-                                        .cover, // Ensure the image fits properly
+                                farm['image'],
+                                width: 100,
+                                height: 100,
+                                fit: BoxFit.cover,
                                 errorBuilder: (context, error, stackTrace) {
-                                  // Fallback image in case of an error
                                   return Image.asset(
                                     'assets/images/fallback_image.png',
                                     width: 100,
@@ -85,9 +81,7 @@ class MyFarmScreen extends StatelessWidget {
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
                                     ),
-                                    overflow:
-                                        TextOverflow
-                                            .ellipsis, // Prevent overflow
+                                    overflow: TextOverflow.ellipsis,
                                   ),
                                   const SizedBox(height: 8),
                                   Row(
@@ -105,9 +99,7 @@ class MyFarmScreen extends StatelessWidget {
                                             fontSize: 14,
                                             color: Colors.grey,
                                           ),
-                                          overflow:
-                                              TextOverflow
-                                                  .ellipsis, // Prevent overflow
+                                          overflow: TextOverflow.ellipsis,
                                         ),
                                       ),
                                     ],
@@ -128,9 +120,7 @@ class MyFarmScreen extends StatelessWidget {
                                             fontSize: 14,
                                             color: Colors.grey,
                                           ),
-                                          overflow:
-                                              TextOverflow
-                                                  .ellipsis, // Prevent overflow
+                                          overflow: TextOverflow.ellipsis,
                                         ),
                                       ),
                                     ],
@@ -142,9 +132,7 @@ class MyFarmScreen extends StatelessWidget {
                                       fontSize: 14,
                                       color: Color(0xFFA3C585),
                                     ),
-                                    overflow:
-                                        TextOverflow
-                                            .ellipsis, // Prevent overflow
+                                    overflow: TextOverflow.ellipsis,
                                   ),
                                 ],
                               ),
@@ -181,7 +169,6 @@ class FarmDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Historical data for charts (example data)
     final List<Map<String, dynamic>> historicalData = [
       {
         'day': 'Mon',
@@ -245,7 +232,6 @@ class FarmDetailScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Farm header with image
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -269,7 +255,7 @@ class FarmDetailScreen extends StatelessWidget {
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
                           ),
-                          overflow: TextOverflow.ellipsis, // Prevent overflow
+                          overflow: TextOverflow.ellipsis,
                         ),
                         const SizedBox(height: 8),
                         Row(
@@ -287,8 +273,7 @@ class FarmDetailScreen extends StatelessWidget {
                                   fontSize: 14,
                                   color: Colors.grey,
                                 ),
-                                overflow:
-                                    TextOverflow.ellipsis, // Prevent overflow
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
                           ],
@@ -309,8 +294,7 @@ class FarmDetailScreen extends StatelessWidget {
                                   fontSize: 14,
                                   color: Colors.grey,
                                 ),
-                                overflow:
-                                    TextOverflow.ellipsis, // Prevent overflow
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
                           ],
@@ -322,7 +306,7 @@ class FarmDetailScreen extends StatelessWidget {
                             fontSize: 14,
                             color: Color(0xFFA3C585),
                           ),
-                          overflow: TextOverflow.ellipsis, // Prevent overflow
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ],
                     ),

@@ -1,6 +1,5 @@
 // farm_data_provider.dart
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -169,7 +168,6 @@ class FarmDataProvider with ChangeNotifier {
   void addCrop(Map<String, dynamic> crop) {
     _crops.add(crop);
 
-    // Also update the crops list for the associated farm
     for (final farm in _farms) {
       if (farm['name'] == crop['farm']) {
         if (!farm['crops'].contains(crop['name'])) {
@@ -182,7 +180,6 @@ class FarmDataProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  // Helper method to get the appropriate image widget for a crop
   Widget getCropImage(Map<String, dynamic> crop) {
     // If no image data is available, show a placeholder
     if (crop['image'] == null) {
@@ -257,7 +254,6 @@ class FarmDataProvider with ChangeNotifier {
         },
       );
     } else {
-      // If it's a user-added farm with a file image
       try {
         return Image.file(
           File(farm['image']),

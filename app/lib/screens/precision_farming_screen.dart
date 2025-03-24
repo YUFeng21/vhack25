@@ -753,7 +753,7 @@ class _PrecisionFarmingScreenState extends State<PrecisionFarmingScreen>
   }) {
     return Container(
       width: width,
-      height: 100, // Fixed height for consistency
+      height: 100,
       padding: const EdgeInsets.all(12.0),
       decoration: BoxDecoration(
         color: color.withOpacity(0.1),

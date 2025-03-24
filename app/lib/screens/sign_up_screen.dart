@@ -117,10 +117,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           email: email,
                           phone: phone,
                           password: password,
-                          username:
-                              email.split(
-                                '@',
-                              )[0], // Use part of email as username (internal)
+                          username: email.split('@')[0],
                         );
                         Navigator.pushReplacementNamed(context, '/home');
                       } else {

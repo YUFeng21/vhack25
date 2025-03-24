@@ -21,7 +21,7 @@ class AppDrawer extends StatelessWidget {
             leading: const Icon(Icons.home),
             title: const Text('Home'),
             onTap: () {
-              Navigator.pop(context); // Close the drawer first
+              Navigator.pop(context);
               Navigator.pushNamed(context, '/home');
             },
           ),
@@ -29,7 +29,7 @@ class AppDrawer extends StatelessWidget {
             leading: const Icon(Icons.agriculture),
             title: const Text('My Farms'),
             onTap: () {
-              Navigator.pop(context); // Close the drawer first
+              Navigator.pop(context);
               Navigator.pushNamed(context, '/farm');
             },
           ),
@@ -37,7 +37,7 @@ class AppDrawer extends StatelessWidget {
             leading: const Icon(Icons.eco),
             title: const Text('My Crops'),
             onTap: () {
-              Navigator.pop(context); // Close the drawer first
+              Navigator.pop(context);
               Navigator.pushNamed(context, '/crops');
             },
           ),
@@ -45,7 +45,7 @@ class AppDrawer extends StatelessWidget {
             leading: const Icon(Icons.chat_bubble_outline),
             title: const Text('AgriBot'),
             onTap: () {
-              Navigator.pop(context); // Close the drawer first
+              Navigator.pop(context);
               Navigator.pushNamed(context, '/agribot');
             },
           ),
@@ -53,7 +53,7 @@ class AppDrawer extends StatelessWidget {
             leading: const Icon(Icons.group),
             title: const Text('AgriFriend'),
             onTap: () {
-              Navigator.pop(context); // Close the drawer first
+              Navigator.pop(context);
               Navigator.pushNamed(context, '/agrifriend');
             },
           ),
@@ -61,7 +61,7 @@ class AppDrawer extends StatelessWidget {
             leading: const Icon(Icons.person),
             title: const Text('Profile'),
             onTap: () {
-              Navigator.pop(context); // Close the drawer first
+              Navigator.pop(context);
               Navigator.pushNamed(context, '/profile');
             },
           ),
@@ -69,7 +69,7 @@ class AppDrawer extends StatelessWidget {
             leading: const Icon(Icons.settings),
             title: const Text('Settings'),
             onTap: () {
-              Navigator.pop(context); // Close the drawer first
+              Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Settings coming soon!')),
               );
@@ -80,10 +80,7 @@ class AppDrawer extends StatelessWidget {
             leading: const Icon(Icons.logout),
             title: const Text('Logout'),
             onTap: () {
-              // Handle logout logic here
               Navigator.pop(context);
-              // Clear user data and navigate to sign-in screen
-              // Provider.of<UserProvider>(context, listen: false).clearUser();
               Navigator.pushNamedAndRemoveUntil(
                 context,
                 '/sign-in',

@@ -32,7 +32,7 @@ class MyCropsScreen extends StatelessWidget {
               child: GridView.builder(
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
-                  childAspectRatio: 1.0, // Square aspect ratio
+                  childAspectRatio: 1.0,
                   crossAxisSpacing: 12,
                   mainAxisSpacing: 12,
                 ),
@@ -57,7 +57,6 @@ class MyCropsScreen extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          // Larger Crop image (60% of card height)
                           Expanded(
                             flex: 6,
                             child: Stack(
@@ -73,7 +72,6 @@ class MyCropsScreen extends StatelessWidget {
                                     fit: BoxFit.cover,
                                   ),
                                 ),
-                                // Overlay gradient for better text visibility
                                 Positioned(
                                   bottom: 0,
                                   left: 0,
@@ -92,7 +90,6 @@ class MyCropsScreen extends StatelessWidget {
                                     ),
                                   ),
                                 ),
-                                // Crop name on image
                                 Positioned(
                                   bottom: 8,
                                   left: 8,
@@ -115,7 +112,6 @@ class MyCropsScreen extends StatelessWidget {
                               ],
                             ),
                           ),
-                          // Crop details (40% of card height)
                           Expanded(
                             flex: 4,
                             child: Padding(
@@ -125,7 +121,6 @@ class MyCropsScreen extends StatelessWidget {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  // Variety
                                   Text(
                                     crop['variety'],
                                     style: const TextStyle(
@@ -137,7 +132,6 @@ class MyCropsScreen extends StatelessWidget {
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                   const SizedBox(height: 4),
-                                  // Status and health row
                                   Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
@@ -445,7 +439,7 @@ class CropDetailScreen extends StatelessWidget {
 
                       const SizedBox(height: 16),
 
-                      // View Detailed Analysis Button
+                      //Detailed Analysis Button
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
@@ -475,7 +469,7 @@ class CropDetailScreen extends StatelessWidget {
                 ),
               ),
 
-              // Weather impact section (new addition)
+              // Weather impact section
               const SizedBox(height: 24),
               Card(
                 elevation: 2,

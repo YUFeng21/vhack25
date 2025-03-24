@@ -17,7 +17,6 @@ class SmartIrrigationScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header image with rounded corners
             ClipRRect(
               borderRadius: BorderRadius.circular(16),
               child: Container(
