@@ -6,6 +6,10 @@ import 'package:image_picker/image_picker.dart'; // Ensure you have image_picker
 import 'package:flutter/foundation.dart'; // For kIsWeb
 import 'package:http_parser/http_parser.dart'; // ✅ Import MediaType
 import 'package:path/path.dart' as path;
+import 'package:provider/provider.dart';
+import 'package:image/image.dart' as img; // Import image package
+import 'dart:io'; // Import dart:io for File
+import 'package:path_provider/path_provider.dart'; // Import path_provider
 
 
 class Message {
@@ -83,123 +87,79 @@ class PlantProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-        // Add the user's message to the chat
-        _messages.add(Message(
-            role: 'user',
-            content: message,
+      _messages.add(Message(role: 'user', content: message));
+      notifyListeners();
+
+      final request = http.Request('POST', Uri.parse('$baseUrl/chat'));
+      request.headers['Content-Type'] = 'application/json';
+      request.body = json.encode({'userId': userId, 'message': message});
+
+      final client = http.Client();
+      final response = await client.send(request);
+
+      if (response.statusCode != 200) {
+        final errorBody = await response.stream.bytesToString();
+        throw Exception('Server returned ${response.statusCode}: $errorBody');
+      }
+
+      await getFarmData(); // Fetch the latest farm data
+
+      // Handle the response if needed
+    } catch (e) {
+      print('Error sending message: $e');
+      _messages.add(Message(
+        role: 'assistant',
+        content: 'Sorry, there was an error. Please try again.',
+      ));
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> sendImageMessage(String userId, String message, XFile imageFile) async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+        // Prepare the request
+        var request = http.MultipartRequest('POST', Uri.parse('$baseUrl/chat'));
+        request.fields['userId'] = userId;
+        request.fields['message'] = message;
+
+        // Attach the image file directly
+        request.files.add(await http.MultipartFile.fromPath(
+            'image', // The name of the field in the server
+            imageFile.path,
+            contentType: MediaType(getMimeType(path.extension(imageFile.path).split('.').last), '')
         ));
-        notifyListeners();
 
-        final tempMessage = Message(
-            role: 'assistant',
-            content: '',
-        );
-        _messages.add(tempMessage);
-        notifyListeners();
+        // Send the request
+        final response = await request.send();
 
-        final request = http.Request('POST', Uri.parse('$baseUrl/chat'));
-        request.headers['Content-Type'] = 'application/json';
-        request.body = json.encode({
-            'message': message,
-        });
-
-        final client = http.Client();
-        final streamedResponse = await client.send(request);
-
-        if (streamedResponse.statusCode != 200) {
-            final errorBody = await streamedResponse.stream.bytesToString();
-            print('Error response body: $errorBody');
-            throw Exception('Server returned ${streamedResponse.statusCode}: $errorBody');
+        if (response.statusCode != 200) {
+            final errorBody = await response.stream.bytesToString();
+            throw Exception('Server returned ${response.statusCode}: $errorBody');
         }
 
+        // Add the message to the local messages list
+        _messages.add(Message(role: 'user', content: message, imageUrl: imageFile.path));
+        notifyListeners();
+
         await getFarmData(); // Fetch the latest farm data
-
-        // Handle the streamed response
-        _handleStreamResponse(streamedResponse, tempMessage);
-
     } catch (e) {
-        print('Error sending message: $e');
+        print('Error sending image message: $e');
         _messages.add(Message(
             role: 'assistant',
             content: 'Sorry, there was an error. Please try again.',
+            imageUrl: null,
+            timestamp: DateTime.now(),
         ));
+    } finally {
         _isLoading = false;
         notifyListeners();
     }
   }
-
-Future<void> sendImageMessage(String userId, String message, XFile imageFile) async {
-  _isLoading = true;
-  _currentStreamingMessage = '';
-  notifyListeners();
-
-  try {
-    String mimeType = getMimeType(imageFile.path); // Get the MIME type
-    // Read image as bytes
-    Uint8List imageBytes = await imageFile.readAsBytes();
-    String base64Image = base64Encode(imageBytes); // Convert to base64
-
-    // Log the request body
-    print('Sending request with body: ${json.encode({
-      'userId': userId,
-      'message': message,
-      'image': {
-        'mimeType': mimeType,
-      },
-    })}');
-
-    var request = http.Request('POST', Uri.parse('$baseUrl/chat'));
-    request.headers['Content-Type'] = 'application/json';
-    request.body = json.encode({
-      'userId': userId,
-      'message': message,
-      'image': {
-        'data': base64Image,
-        'mimeType': mimeType,
-      },
-    });
-
-    final client = http.Client();
-    final streamedResponse = await client.send(request);
-
-    if (streamedResponse.statusCode != 200) {
-      final errorBody = await streamedResponse.stream.bytesToString();
-      print('Error response body: $errorBody');
-      throw Exception('Server returned ${streamedResponse.statusCode}: $errorBody');
-    }
-
-    // Add the image message to the chat
-    _messages.add(Message(
-      role: 'user',
-      content: message.isNotEmpty ? message : '', // Use the message if provided
-      imageUrl: base64Image, // Store the base64 string instead of the file path
-      timestamp: DateTime.now(),
-    ));
-    print('Message added: ${_messages.last.content}'); // Debugging line
-    notifyListeners();
-
-    await getFarmData(); // Fetch the latest farm data
-    
-    // Handle the streamed response
-    _handleStreamResponse(streamedResponse, Message(
-      role: 'assistant',
-      content: '',
-      imageUrl: null,
-      timestamp: DateTime.now(),
-    ));
-
-  } catch (e) {
-    print('Error sending image and message: $e');
-    _messages.add(Message(
-      role: 'assistant',
-      content: 'Sorry, there was an error. Please try again.',
-      imageUrl: null,
-      timestamp: DateTime.now(),
-    ));
-    _isLoading = false;
-    notifyListeners();
-  }
-}
 
   void _handleStreamResponse(http.StreamedResponse streamedResponse, Message tempMessage) {
     _streamSubscription = streamedResponse.stream
@@ -332,18 +292,16 @@ Future<void> sendImageMessage(String userId, String message, XFile imageFile) as
     super.dispose();
   }
 
-  String getMimeType(String filePath) {
-    String extension = path.extension(filePath).toLowerCase();
-    
-    switch (extension) {
-      case '.png':
+  String getMimeType(String extension) {
+    switch (extension.toLowerCase()) {
+      case 'png':
         return 'image/png';
-      case '.jpg':
-      case '.jpeg':
+      case 'jpg':
+      case 'jpeg':
         return 'image/jpeg';
-      case '.gif':
+      case 'gif':
         return 'image/gif';
-      case '.webp':
+      case 'webp':
         return 'image/webp';
       default:
         return 'application/octet-stream'; // Fallback for unsupported formats

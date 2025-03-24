@@ -44,14 +44,10 @@ app.post('/chat', upload.single('image'), async (req, res) => {
         const jamaiData = { question: message || "No text provided" };
 
         if (image) {
-            // Read the image file and convert it to base64
-            const imageData = fs.readFileSync(image.path); // Read the image file
-            const base64Image = imageData.toString('base64'); // Convert to base64
-
-            // Add the base64 image to the jamaiData
+            // Use the image file path directly
             jamaiData.image = {
-                data: base64Image,
-                mimeType: getMimeType(image.originalname), // Use the original file name to get the MIME type
+                data: fs.readFileSync(image.path).toString('base64'), // Convert to base64 if needed
+                mimeType: image.mimetype, // Use the MIME type from multer
             };
         }
 
@@ -116,21 +112,3 @@ app.get("/get-farm-data", async (_, res) => {
 app.listen(port, () => {
     console.log(`🚀 Server running on port ${port}`);
 });
-
-function getMimeType(filePath) {
-    const extension = path.extname(filePath).toLowerCase();
-    
-    switch (extension) {
-        case '.png':
-            return 'image/png';
-        case '.jpg':
-        case '.jpeg':
-            return 'image/jpeg';
-        case '.gif':
-            return 'image/gif';
-        case '.webp':
-            return 'image/webp';
-        default:
-            return 'application/octet-stream'; // Fallback for unsupported formats
-    }
-}
