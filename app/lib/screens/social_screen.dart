@@ -6,6 +6,7 @@ import 'dart:io';
 import '../providers/post_provider.dart';
 import '../providers/user_provider.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import '../models/post.dart';
 
 class SocialScreen extends StatefulWidget {
   const SocialScreen({super.key});
@@ -170,11 +171,18 @@ class _SocialScreenState extends State<SocialScreen> {
                 IconButton(
                   icon: Icon(Icons.send),
                   onPressed: () {
-                    postProvider.addPost(
-                      userProvider.user.username,
-                      _postController.text,
-                      imageUrl: _imageUrl,
+                    // Create a new Post object
+                    final newPost = Post(
+                      username: userProvider.user.username,
+                      content: _postController.text,
+                      timestamp: DateTime.now(),
+                      imageUrl: _imageUrl, // Assuming your Post class has an imageUrl field
                     );
+
+                    // Add the new post using the provider
+                    postProvider.addPost(newPost);
+
+                    // Clear the text field and reset the image URL
                     _postController.clear();
                     setState(() {
                       _imageUrl = null;

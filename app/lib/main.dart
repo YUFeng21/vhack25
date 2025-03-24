@@ -24,14 +24,17 @@ import 'providers/plant_provider.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
-  // Ensure that the Flutter binding is initialized
   WidgetsFlutterBinding.ensureInitialized();
-  
-  // Load the .env file from the assets directory
-  await dotenv.load(fileName: "assets/.env"); // Correct the path if necessary
+  await dotenv.load(fileName: "assets/.env");
   runApp(
-    ChangeNotifierProvider(
-      create: (context) => MqttService()..connect(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => UserProvider()),
+        ChangeNotifierProvider(create: (context) => PostProvider()),
+        ChangeNotifierProvider(create: (context) => FarmDataProvider()),
+        ChangeNotifierProvider(create: (context) => MqttService()..connect()),
+        ChangeNotifierProvider(create: (context) => PlantProvider()),
+      ],
       child: MyApp(),
     ),
   );
@@ -42,53 +45,29 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (context) => UserProvider()),
-        ChangeNotifierProvider(create: (context) => PostProvider()),
-        ChangeNotifierProvider(create: (context) => FarmDataProvider()),
-        ChangeNotifierProvider(create: (context) => MqttService()..connect()),
-        ChangeNotifierProvider(create: (context) => PlantProvider()),
-      ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          primarySwatch: Colors.green,
-          useMaterial3: true,
-          colorScheme: ColorScheme.fromSeed(
-            seedColor: const Color(0xFFA3C585),
-            primary: const Color(0xFFA3C585),
-            secondary: const Color(0xFF0B6E4F),
-          ),
-          scaffoldBackgroundColor: Colors.white,
-          elevatedButtonTheme: ElevatedButtonThemeData(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFA3C585),
-              foregroundColor: Colors.white,
-            ),
-          ),
-        ),
-        initialRoute: '/',
-        home: const SplashScreen(),
-        routes: {
-          '/home': (context) => const HomeScreen(),
-          '/profile': (context) => const ProfileScreen(),
-          '/farm': (context) => MyFarmScreen(mqttService: Provider.of<MqttService>(context)),
-          '/crops': (context) => const MyCropsScreen(),
-          '/agribot': (context) => const ChatbotScreen(),
-          '/agrifriend': (context) => const SocialScreen(),
-          '/sign-in': (context) => SignInScreen(),
-          '/sign-up': (context) => const SignUpScreen(),
-          '/smart_irrigation': (context) => const SmartIrrigationScreen(),
-          '/pest_control': (context) => const PestControlScreen(),
-          '/precision_farming': (context) => const PrecisionFarmingScreen(),
-          '/crop_health': (context) => const CropHealthScreen(),
-          '/sign-up': (context) => SignUpScreen(),
-          '/profile': (context) => ProfileScreen(),
-          '/chat': (context) => ChatScreen(),
-          '/community': (context) => CommunityScreen(),
-        },
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        primarySwatch: Colors.green,
+        useMaterial3: true,
       ),
+      home: SignInScreen(),
+      routes: {
+        '/home': (context) => const HomeScreen(),
+        '/profile': (context) => const ProfileScreen(),
+        '/farm': (context) => MyFarmScreen(mqttService: Provider.of<MqttService>(context)),
+        '/crops': (context) => const MyCropsScreen(),
+        '/agribot': (context) => const ChatbotScreen(),
+        '/agrifriend': (context) => const SocialScreen(),
+        '/sign-in': (context) => SignInScreen(),
+        '/sign-up': (context) => const SignUpScreen(),
+        '/smart_irrigation': (context) => const SmartIrrigationScreen(),
+        '/pest_control': (context) => const PestControlScreen(),
+        '/precision_farming': (context) => const PrecisionFarmingScreen(),
+        '/crop_health': (context) => const CropHealthScreen(),
+        '/chat': (context) => ChatScreen(),
+        '/community': (context) => CommunityScreen(),
+      },
     );
   }
 }

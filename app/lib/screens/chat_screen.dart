@@ -9,6 +9,8 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:flutter/foundation.dart'; // Import kIsWeb
 import 'dart:convert'; // Import base64Decode
+import 'package:http/http.dart' as http;
+import 'package:image/image.dart' as img;
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
@@ -158,7 +160,6 @@ class _ChatScreenState extends State<ChatScreen> {
                 setState(() {
                   _selectedImage = pickedFile; // Store the selected image
                 });
-                await _sendImageMessage(_selectedImage!, _messageController.text.trim()); // Pass the message content
               }
             },
             tooltip: 'Upload Image',
@@ -168,17 +169,25 @@ class _ChatScreenState extends State<ChatScreen> {
               return IconButton(
                 icon: Icon(Icons.send_rounded),
                 onPressed: () async {
-                  if (_messageController.text.trim().isNotEmpty) {
+                  if (_messageController.text.trim().isNotEmpty || _selectedImage != null) {
                     final userId = Provider.of<UserProvider>(
                       context,
                       listen: false,
                     ).user.username;
-                    print('User ID: $userId'); // Debugging line
 
-                    await plantProvider.sendTextMessage(
-                      userId,
-                      _messageController.text.trim(),
-                    );
+                    if (_selectedImage != null) {
+                      await plantProvider.sendImageMessage(
+                        userId,
+                        _messageController.text.trim(),
+                        _selectedImage!,
+                      );
+                      _selectedImage = null; // Reset the selected image after sending
+                    } else {
+                      await plantProvider.sendTextMessage(
+                        userId,
+                        _messageController.text.trim(),
+                      );
+                    }
 
                     _messageController.clear();
                     _scrollToBottom();
@@ -191,33 +200,6 @@ class _ChatScreenState extends State<ChatScreen> {
         ],
       ),
     );
-  }
-
-  Future<void> _sendImageMessage(XFile imageFile, String message) async {
-    final userId = Provider.of<UserProvider>(context, listen: false).user?.username;
-    final plantProvider = Provider.of<PlantProvider>(context, listen: false);
-
-    if (userId == null) {
-      print('User ID is null. Cannot send image message.');
-      return; // Early return if userId is null
-    }
-
-    try {
-      // Add the image message to the local messages list
-      plantProvider.messages.add(Message(
-        role: 'user',
-        content: message, // Pass the actual message content
-        imageUrl: kIsWeb ? base64Encode(await imageFile.readAsBytes()) : imageFile.path,
-        timestamp: DateTime.now(),
-      ));
-      plantProvider.notifyListeners(); // Notify listeners to update the UI
-
-      // Send the image message
-      await plantProvider.sendImageMessage(userId, message, imageFile); // Pass the message content
-    } catch (e) {
-      print('Error sending image message: $e');
-      // Optionally, show a message to the user
-    }
   }
 
   @override
