@@ -112,6 +112,8 @@ class PlantProvider with ChangeNotifier {
             throw Exception('Server returned ${streamedResponse.statusCode}: $errorBody');
         }
 
+        await getFarmData(); // Fetch the latest farm data
+
         // Handle the streamed response
         _handleStreamResponse(streamedResponse, tempMessage);
 
@@ -173,8 +175,11 @@ Future<void> sendImageMessage(String userId, String message, XFile imageFile) as
       imageUrl: base64Image, // Store the base64 string instead of the file path
       timestamp: DateTime.now(),
     ));
+    print('Message added: ${_messages.last.content}'); // Debugging line
     notifyListeners();
 
+    await getFarmData(); // Fetch the latest farm data
+    
     // Handle the streamed response
     _handleStreamResponse(streamedResponse, Message(
       role: 'assistant',
@@ -202,6 +207,7 @@ Future<void> sendImageMessage(String userId, String message, XFile imageFile) as
         .transform(const LineSplitter())
         .listen(
       (data) {
+        print('Received stream data: $data'); // Debugging line
         if (data.startsWith('data: ')) {
           try {
             // Strip the 'data: ' prefix before parsing
@@ -246,19 +252,26 @@ Future<void> sendImageMessage(String userId, String message, XFile imageFile) as
     notifyListeners();
 
     try {
+        print('Fetching farm data...'); // Debugging line
         final response = await http.get(Uri.parse('$baseUrl/get-farm-data'));
 
-        // Log the response for debugging
-        print('Response status: ${response.statusCode}');
-        print('Response body: ${response.body}');
+        print('Response status: ${response.statusCode}'); // Log response status
+        print('Response body: ${response.body}'); // Log response body
 
         if (response.statusCode == 200) {
             final List<dynamic> data = jsonDecode(response.body);
-            // Get the latest entry (assuming the latest is the last item)
             if (data.isNotEmpty) {
                 _farmData = [FarmData.fromJson(data.first)]; // Only keep the latest entry
-                // Optionally, you can also store the latest message
-                final latestMessage = "Latest Farm Data:\nType of Plant: ${data.first['type_plant']}\nEnvironment: ${data.first['environment']}\nSuitable Soil: ${data.first['suitable_soil']}\nWatering Amount: ${data.first['watering_amount']}";
+                final latestEntry = data.first;
+
+                // Format the latest message neatly without space before the hyphen
+                final latestMessage = '''
+- Type of Plant: ${latestEntry['type_plant'] ?? 'N/A'}
+- Environment: ${latestEntry['environment'] ?? 'N/A'}
+- Suitable Soil: ${latestEntry['suitable_soil'] ?? 'N/A'}
+- Watering Amount: ${latestEntry['watering_amount'] ?? 'N/A'}
+''';
+
                 _messages.add(Message(role: 'assistant', content: latestMessage)); // Add to messages
             } else {
                 _farmData = []; // No data case
