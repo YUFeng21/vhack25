@@ -1,50 +1,41 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'screens/home_screen.dart';
 import 'screens/sign_in_screen.dart';
 import 'screens/sign_up_screen.dart';
 import 'screens/profile_screen.dart';
-import 'dart:io';
+import 'screens/receipts_screen.dart';
+import 'screens/social_screen.dart';
+import 'providers/user_provider.dart';
+import 'providers/post_provider.dart';
 
 void main() {
   runApp(MyApp());
 }
 
-class MyApp extends StatefulWidget {
-  const MyApp({super.key});
-
-  @override
-  _MyAppState createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
-  String _username = '';
-  String _email = '';
-  String _password = '';
-  File? _profileImage;
-
-  void _updateUserDetails(String username, String email, String password, String confirmPassword, File? profileImage) {
-    setState(() {
-      _username = username;
-      _email = email;
-      _password = password;
-      _profileImage = profileImage;
-    });
-  }
-
+class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Agriculture App',
-      theme: ThemeData(
-        primarySwatch: Colors.green,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => UserProvider()),
+        ChangeNotifierProvider(create: (context) => PostProvider()),
+      ],
+      child: MaterialApp(
+        title: 'Agriculture App',
+        theme: ThemeData(
+          primarySwatch: Colors.green,
+        ),
+        initialRoute: '/',
+        routes: {
+          '/': (context) => HomeScreen(),
+          '/sign-in': (context) => SignInScreen(),
+          '/sign-up': (context) => SignUpScreen(),
+          '/profile': (context) => ProfileScreen(),
+          '/receipts': (context) => ReceiptsScreen(),
+          '/social': (context) => SocialScreen(),
+        },
       ),
-      initialRoute: '/',
-      routes: {
-        '/': (context) => HomeScreen(),
-        '/sign-in': (context) => SignInScreen(updateUserDetails: _updateUserDetails),
-        '/sign-up': (context) => SignUpScreen(updateUserDetails: _updateUserDetails),
-        '/profile': (context) => ProfileScreen(username: _username, email: _email, password: _password, profileImage: _profileImage),
-      },
     );
   }
 }

@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'dart:io';
+import '../providers/user_provider.dart';
 import '../widgets/base_layout.dart';
 
 class SignUpScreen extends StatefulWidget {
-  final Function(String, String, String, String, File?) updateUserDetails;
-
-  const SignUpScreen({super.key, required this.updateUserDetails});
-
   @override
   _SignUpScreenState createState() => _SignUpScreenState();
 }
@@ -30,7 +28,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             children: <Widget>[
               CircleAvatar(
                 radius: 50,
-                backgroundImage: AssetImage('assets/profile-pic.png'), // Fixed round image
+                backgroundImage: AssetImage('assets/profile-pic.png'), // Correct asset path
               ),
               SizedBox(height: 20),
               TextField(
@@ -60,7 +58,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   String confirmPassword = _confirmPasswordController.text;
 
                   if (password == confirmPassword) {
-                    widget.updateUserDetails(username, email, password, confirmPassword, _profileImage);
+                    Provider.of<UserProvider>(context, listen: false).updateUser(username, email, password, _profileImage);
                     Navigator.pushNamed(context, '/profile');
                   } else {
                     // Show error message

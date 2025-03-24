@@ -1,41 +1,77 @@
 import 'package:flutter/material.dart';
-import 'dart:io';
+import 'package:provider/provider.dart';
+import '../providers/user_provider.dart';
 import '../widgets/base_layout.dart';
 
-class ProfileScreen extends StatelessWidget {
-  final String username;
-  final String email;
-  final String password;
-  final File? profileImage;
+class ProfileScreen extends StatefulWidget {
+  @override
+  _ProfileScreenState createState() => _ProfileScreenState();
+}
 
-  const ProfileScreen({super.key, required this.username, required this.email, required this.password, this.profileImage});
+class _ProfileScreenState extends State<ProfileScreen> {
+  late TextEditingController _usernameController;
+  late TextEditingController _emailController;
+  late TextEditingController _passwordController;
+
+  @override
+  void initState() {
+    super.initState();
+    final user = Provider.of<UserProvider>(context, listen: false).user;
+    _usernameController = TextEditingController(text: user.username);
+    _emailController = TextEditingController(text: user.email);
+    _passwordController = TextEditingController(text: user.password);
+  }
 
   @override
   Widget build(BuildContext context) {
     return BaseLayout(
       currentIndex: 3,
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            CircleAvatar(
-              radius: 50,
-              backgroundImage: AssetImage('assets/profile-pic.png'), // Fixed round image
-            ),
-            SizedBox(height: 20),
-            Text(
-              'Username: $username',
-              style: TextStyle(fontSize: 20),
-            ),
-            Text(
-              'Email: $email',
-              style: TextStyle(fontSize: 20),
-            ),
-            Text(
-              'Password: $password',
-              style: TextStyle(fontSize: 20),
-            ),
-          ],
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              TextField(
+                controller: _usernameController,
+                decoration: InputDecoration(labelText: 'Username'),
+              ),
+              TextField(
+                controller: _emailController,
+                decoration: InputDecoration(labelText: 'Email'),
+              ),
+              TextField(
+                controller: _passwordController,
+                decoration: InputDecoration(labelText: 'Password'),
+                obscureText: true,
+              ),
+              SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  // Handle update profile logic here
+                  Provider.of<UserProvider>(context, listen: false).updateUser(
+                    _usernameController.text,
+                    _emailController.text,
+                    _passwordController.text,
+                    null,
+                  );
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Profile updated successfully')),
+                  );
+                },
+                child: Text('Update Profile'),
+              ),
+              SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  // Handle log out logic here
+                  Provider.of<UserProvider>(context, listen: false).clearUser();
+                  Navigator.pushNamedAndRemoveUntil(context, '/sign-in', (route) => false);
+                },
+                child: Text('Log Out'),
+              ),
+            ],
+          ),
         ),
       ),
     );
