@@ -29,8 +29,6 @@ void main() async {
   
   // Load the .env file from the assets directory
   await dotenv.load(fileName: "assets/.env"); // Correct the path if necessary
-  runApp(MyApp());
-void main() {
   runApp(
     ChangeNotifierProvider(
       create: (context) => MqttService()..connect(),
@@ -57,9 +55,6 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.green,
           useMaterial3: true,
-        ),
-        initialRoute: '/',
-          primaryColor: const Color(0xFFA3C585),
           colorScheme: ColorScheme.fromSeed(
             seedColor: const Color(0xFFA3C585),
             primary: const Color(0xFFA3C585),
@@ -73,6 +68,7 @@ class MyApp extends StatelessWidget {
             ),
           ),
         ),
+        initialRoute: '/',
         home: const SplashScreen(),
         routes: {
           '/home': (context) => const HomeScreen(),
