@@ -3,15 +3,18 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:provider/provider.dart';
 import '../providers/farm_data_provider.dart';
+import '../services/mqtt_service.dart'; // Add this line to import MqttService
 import 'add_farm_screen.dart';
 
 class MyFarmScreen extends StatelessWidget {
-  const MyFarmScreen({super.key});
+  const MyFarmScreen({super.key, required this.mqttService});
 
-  @override
+  final MqttService mqttService;
   Widget build(BuildContext context) {
     final farmData = Provider.of<FarmDataProvider>(context);
     final List<Map<String, dynamic>> farms = farmData.farms;
+
+    final mqttService = Provider.of<MqttService>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -38,7 +41,7 @@ class MyFarmScreen extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => FarmDetailScreen(farm: farm),
+                          builder: (context) => FarmDetailScreen(farm: farm, mqttService: mqttService),
                         ),
                       );
                     },
@@ -164,8 +167,9 @@ class MyFarmScreen extends StatelessWidget {
 
 class FarmDetailScreen extends StatelessWidget {
   final Map<String, dynamic> farm;
+  final MqttService mqttService;
 
-  const FarmDetailScreen({super.key, required this.farm});
+  const FarmDetailScreen({super.key, required this.farm, required this.mqttService});
 
   @override
   Widget build(BuildContext context) {
@@ -328,7 +332,7 @@ class FarmDetailScreen extends StatelessWidget {
                   Expanded(
                     child: _buildSensorCard(
                       'Soil Moisture',
-                      '${farm['soilMoisture']}%',
+                      '${mqttService.soilMoisture}%',
                       Icons.water_drop,
                       Colors.blue,
                     ),
@@ -337,7 +341,7 @@ class FarmDetailScreen extends StatelessWidget {
                   Expanded(
                     child: _buildSensorCard(
                       'pH Level',
-                      '${farm['pH']}',
+                      '${mqttService.phValue}',
                       Icons.science,
                       Colors.purple,
                     ),
@@ -350,7 +354,7 @@ class FarmDetailScreen extends StatelessWidget {
                   Expanded(
                     child: _buildSensorCard(
                       'Temperature',
-                      '${farm['temperature']}°C',
+                      '${mqttService.temperature}°C',
                       Icons.thermostat,
                       Colors.orange,
                     ),
@@ -359,7 +363,7 @@ class FarmDetailScreen extends StatelessWidget {
                   Expanded(
                     child: _buildSensorCard(
                       'Humidity',
-                      '${farm['humidity']}%',
+                      '${mqttService.humidity}%',
                       Icons.water,
                       Colors.teal,
                     ),

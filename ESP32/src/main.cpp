@@ -1,7 +1,7 @@
 #include <WiFi.h>
 #include <WiFiClientSecure.h>
 #include <PubSubClient.h>
-#include <DHT.h>.
+#include <DHT.h>
 
 // ✅ WiFi & MQTT Credentials
 const char* ssid = "Wokwi-GUEST";  
@@ -15,12 +15,12 @@ const char* mqttTopic = "farm/sensors";
 // ✅ Sensor Pins
 #define DHT_PIN 4
 #define DHT_TYPE DHT22
-#define LDR_PIN 34
+#define LDR_PIN 34  // Used instead of pH sensor
 #define SOIL_MOISTURE_PIN 35
 #define BUZZER_PIN 5
 
 // ✅ Objects
-WiFiClientSecure espClient;  // Secure Client for SSL
+WiFiClientSecure espClient;
 PubSubClient client(espClient);
 DHT dht(DHT_PIN, DHT_TYPE);
 
@@ -30,8 +30,8 @@ const int readInterval = 5000;
 bool buzzerOn = false;
 unsigned long buzzerStartTime = 0;
 
-void reconnectMQTT(); // Forward declaration
-void readAndSendData(); // Forward declaration
+void reconnectMQTT();
+void readAndSendData();
 
 void setup() {
     Serial.begin(115200);
@@ -86,16 +86,21 @@ void readAndSendData() {
         return;
     }
 
+    // ✅ Convert LDR reading to a simulated pH value (0 to 14)
+    float simulated_pH = map(lightIntensity, 4095, 0, 0, 14);
+
+    // ✅ Convert Soil Moisture to percentage
     int soilMoisturePercent = map(soilMoisture, 4095, 0, 0, 100);
 
-    Serial.printf("🌡 Temp: %.1f°C, 💧 Humidity: %.1f%%, ☀️ Light: %d, 🌱 Soil Moisture: %d%%\n",
-                  temperature, humidity, lightIntensity, soilMoisturePercent);
+    Serial.printf("🌡 Temp: %.1f°C, 💧 Humidity: %.1f%%, ☀️ Light: %d, 🌱 Soil Moisture: %d%%, 🧪 Simulated pH: %.2f\n",
+                  temperature, humidity, lightIntensity, soilMoisturePercent, simulated_pH);
 
     String payload = "{";
     payload += "\"temperature\":" + String(temperature) + ",";
     payload += "\"humidity\":" + String(humidity) + ",";
     payload += "\"lightIntensity\":" + String(lightIntensity) + ",";
-    payload += "\"soilMoisture\":" + String(soilMoisturePercent);
+    payload += "\"soilMoisture\":" + String(soilMoisturePercent) + ",";
+    payload += "\"pH\":" + String(simulated_pH);
     payload += "}";
 
     if (client.publish(mqttTopic, payload.c_str(), true)) {

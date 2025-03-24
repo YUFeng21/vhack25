@@ -10,6 +10,8 @@
             "includePath": [
                 "c:/Users/Koh/Desktop/IOT_Farming/vhack25/ESP32/include",
                 "c:/Users/Koh/Desktop/IOT_Farming/vhack25/ESP32/src",
+                "C:/Users/Koh/.platformio/packages/framework-arduinoespressif32/libraries/WiFiClientSecure/src",
+                "C:/Users/Koh/.platformio/packages/framework-arduinoespressif32/libraries/WiFi/src",
                 "c:/Users/Koh/Desktop/IOT_Farming/vhack25/ESP32/.pio/libdeps/esp32doit-devkit-v1/DHT sensor library",
                 "c:/Users/Koh/Desktop/IOT_Farming/vhack25/ESP32/.pio/libdeps/esp32doit-devkit-v1/Adafruit Unified Sensor",
                 "c:/Users/Koh/Desktop/IOT_Farming/vhack25/ESP32/.pio/libdeps/esp32doit-devkit-v1/PubSubClient/src",
@@ -238,8 +240,6 @@
                 "C:/Users/Koh/.platformio/packages/framework-arduinoespressif32/libraries/USB/src",
                 "C:/Users/Koh/.platformio/packages/framework-arduinoespressif32/libraries/Update/src",
                 "C:/Users/Koh/.platformio/packages/framework-arduinoespressif32/libraries/WebServer/src",
-                "C:/Users/Koh/.platformio/packages/framework-arduinoespressif32/libraries/WiFi/src",
-                "C:/Users/Koh/.platformio/packages/framework-arduinoespressif32/libraries/WiFiClientSecure/src",
                 "C:/Users/Koh/.platformio/packages/framework-arduinoespressif32/libraries/WiFiProv/src",
                 "C:/Users/Koh/.platformio/packages/framework-arduinoespressif32/libraries/Wire/src",
                 ""
@@ -249,6 +249,8 @@
                 "path": [
                     "c:/Users/Koh/Desktop/IOT_Farming/vhack25/ESP32/include",
                     "c:/Users/Koh/Desktop/IOT_Farming/vhack25/ESP32/src",
+                    "C:/Users/Koh/.platformio/packages/framework-arduinoespressif32/libraries/WiFiClientSecure/src",
+                    "C:/Users/Koh/.platformio/packages/framework-arduinoespressif32/libraries/WiFi/src",
                     "c:/Users/Koh/Desktop/IOT_Farming/vhack25/ESP32/.pio/libdeps/esp32doit-devkit-v1/DHT sensor library",
                     "c:/Users/Koh/Desktop/IOT_Farming/vhack25/ESP32/.pio/libdeps/esp32doit-devkit-v1/Adafruit Unified Sensor",
                     "c:/Users/Koh/Desktop/IOT_Farming/vhack25/ESP32/.pio/libdeps/esp32doit-devkit-v1/PubSubClient/src",
@@ -477,8 +479,6 @@
                     "C:/Users/Koh/.platformio/packages/framework-arduinoespressif32/libraries/USB/src",
                     "C:/Users/Koh/.platformio/packages/framework-arduinoespressif32/libraries/Update/src",
                     "C:/Users/Koh/.platformio/packages/framework-arduinoespressif32/libraries/WebServer/src",
-                    "C:/Users/Koh/.platformio/packages/framework-arduinoespressif32/libraries/WiFi/src",
-                    "C:/Users/Koh/.platformio/packages/framework-arduinoespressif32/libraries/WiFiClientSecure/src",
                     "C:/Users/Koh/.platformio/packages/framework-arduinoespressif32/libraries/WiFiProv/src",
                     "C:/Users/Koh/.platformio/packages/framework-arduinoespressif32/libraries/Wire/src",
                     ""

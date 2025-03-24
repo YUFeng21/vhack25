@@ -17,6 +17,7 @@ class MqttService extends ChangeNotifier {
   double humidity = 0.0;
   int lightIntensity = 0;
   int soilMoisture = 0;
+  double phValue = 7.0; // Default pH value
 
   MqttService() {
     client = MqttBrowserClient(broker, clientId);
@@ -66,6 +67,7 @@ class MqttService extends ChangeNotifier {
       humidity = data["humidity"] ?? 0.0;
       lightIntensity = data["lightIntensity"] ?? 0;
       soilMoisture = data["soilMoisture"] ?? 0;
+      phValue = data["pH"] ?? 0.0;
       notifyListeners(); // Update UI
     } catch (e) {
       print("❌ JSON Error: $e");

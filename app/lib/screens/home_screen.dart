@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../providers/user_provider.dart';
 import '../providers/farm_data_provider.dart';
 import '../widgets/app_drawer.dart';
+import '../services/mqtt_service.dart'; // Add this line
 import 'social_screen.dart';
 import 'chatbot_screen.dart';
 import 'profile_screen.dart';
@@ -217,7 +218,7 @@ class HomeContent extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const MyFarmScreen(),
+                        builder: (context) => MyFarmScreen(mqttService: Provider.of<MqttService>(context)),
                       ),
                     );
                   },

@@ -38,6 +38,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => UserProvider()),
         ChangeNotifierProvider(create: (context) => PostProvider()),
         ChangeNotifierProvider(create: (context) => FarmDataProvider()),
+        ChangeNotifierProvider(create: (context) => MqttService()..connect()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -60,7 +61,7 @@ class MyApp extends StatelessWidget {
         routes: {
           '/home': (context) => const HomeScreen(),
           '/profile': (context) => const ProfileScreen(),
-          '/farm': (context) => const MyFarmScreen(),
+          '/farm': (context) => MyFarmScreen(mqttService: Provider.of<MqttService>(context)),
           '/crops': (context) => const MyCropsScreen(),
           '/agribot': (context) => const ChatbotScreen(),
           '/agrifriend': (context) => const SocialScreen(),
@@ -71,10 +72,7 @@ class MyApp extends StatelessWidget {
           '/precision_farming': (context) => const PrecisionFarmingScreen(),
           '/crop_health': (context) => const CropHealthScreen(),
         },
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData.dark(),
-      home: DashboardScreen(),
+      ),
     );
   }
 }
