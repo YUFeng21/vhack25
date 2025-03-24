@@ -1,7 +1,7 @@
 #include <WiFi.h>
 #include <WiFiClientSecure.h>
 #include <PubSubClient.h>
-#include <DHT.h>
+#include <DHT.h>.
 
 // ✅ WiFi & MQTT Credentials
 const char* ssid = "Wokwi-GUEST";  

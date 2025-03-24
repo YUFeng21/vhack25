@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart'; // ✅ Load .env file
 import 'package:provider/provider.dart';
-import 'providers/mqtt_provider.dart';
+import 'services/mqtt_service.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await dotenv.load(); // ✅ Load .env file before running the app
-
+void main() {
   runApp(
     ChangeNotifierProvider(
-      create: (_) => MqttProvider(),
+      create: (context) => MqttService()..connect(),
       child: MyApp(),
     ),
   );
@@ -20,31 +16,49 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'MQTT Flutter',
-      home: HomePage(),
+      theme: ThemeData.dark(),
+      home: DashboardScreen(),
     );
   }
 }
 
-class HomePage extends StatelessWidget {
+class DashboardScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final mqttProvider = Provider.of<MqttProvider>(context);
+    final mqttService = Provider.of<MqttService>(context);
 
     return Scaffold(
-      appBar: AppBar(title: Text("MQTT Sensor Data")),
-      body: Center(
+      appBar: AppBar(title: Text("IoT Farm Dashboard")),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text("Received Data:", style: TextStyle(fontSize: 18)),
-            SizedBox(height: 10),
-            Text(
-              mqttProvider.receivedMessage,
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
+            SensorCard("🌡 Temperature", "${mqttService.temperature} °C", Colors.orange),
+            SensorCard("💧 Humidity", "${mqttService.humidity} %", Colors.blue),
+            SensorCard("☀️ Light Intensity", "${mqttService.lightIntensity}", Colors.yellow),
+            SensorCard("🌱 Soil Moisture", "${mqttService.soilMoisture} %", Colors.green),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class SensorCard extends StatelessWidget {
+  final String title;
+  final String value;
+  final Color color;
+
+  SensorCard(this.title, this.value, this.color);
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      color: color.withOpacity(0.2),
+      child: ListTile(
+        leading: Icon(Icons.sensor_window, color: color),
+        title: Text(title, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+        trailing: Text(value, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
       ),
     );
   }
