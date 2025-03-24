@@ -1,8 +1,103 @@
+//home_screen.dart
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/user_provider.dart';
+import '../providers/farm_data_provider.dart';
+import '../widgets/app_drawer.dart';
+import '../services/mqtt_service.dart'; // Add this line
+import 'social_screen.dart';
+import 'chatbot_screen.dart';
+import 'profile_screen.dart';
+import 'my_farm_screen.dart';
+import 'my_crops_screen.dart';
+import 'weather_detail_screen.dart';
 import '../widgets/base_layout.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  int currentIndex = 0;
+
+  // List of pages for the bottom navigation bar
+  final List<Widget> pages = [
+    const HomeContent(), // Home content
+    const SocialScreen(), // AgriFriend content
+    const ChatbotScreen(), // AgriBot content
+    const ProfileScreen(), // Profile content
+  ];
+
+  void onTabTapped(int index) {
+    setState(() {
+      currentIndex = index; // Update the selected index
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final userName = Provider.of<UserProvider>(context).username;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Row(
+          children: [
+            const Text('Hi, '),
+            Text(userName, style: const TextStyle(fontWeight: FontWeight.bold)),
+            const Text('!'),
+          ],
+        ),
+        backgroundColor: const Color(0xFFDCECCF),
+        leading: Builder(
+          builder:
+              (context) => IconButton(
+                icon: const Icon(Icons.menu),
+                onPressed: () {
+                  Scaffold.of(context).openDrawer();
+                },
+              ),
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.notifications),
+            onPressed: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('No new notifications')),
+              );
+            },
+          ),
+        ],
+      ),
+      drawer: const AppDrawer(),
+      body: pages[currentIndex], // Display the selected page
+      bottomNavigationBar: BottomNavigationBar(
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.people),
+            label: 'AgriFriend',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.chat_bubble_outline),
+            label: 'AgriBot',
+          ),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+        ],
+        currentIndex: currentIndex,
+        selectedItemColor: Color(0xFFA3C585),
+        unselectedItemColor: Colors.grey,
+        onTap: onTabTapped, // Handle tab selection
+      ),
+    );
+  }
+}
+
+// HomeContent widget
+class HomeContent extends StatelessWidget {
+  const HomeContent({super.key});
 
   Widget _buildFeatureCard(IconData icon, String title, String description, VoidCallback onTap) {
     return Card(
@@ -199,5 +294,102 @@ class HomeScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Widget _buildNewsCard(Map<String, dynamic> news) {
+    return Container(
+      width: 250,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Card(
+        elevation: 0,
+        margin: EdgeInsets.zero,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // News Image
+            ClipRRect(
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(12),
+                topRight: Radius.circular(12),
+              ),
+              child: Image.asset(
+                news['image'],
+                height: 80,
+                width: double.infinity,
+                fit: BoxFit.cover,
+              ),
+            ),
+            // News Content
+            Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    news['title'],
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    news['description'],
+                    style: TextStyle(fontSize: 12, color: Colors.grey[700]),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _getWeatherIcon(String condition) {
+    IconData iconData;
+    Color color;
+
+    switch (condition.toLowerCase()) {
+      case 'sunny':
+        iconData = Icons.wb_sunny;
+        color = Colors.orange;
+        break;
+      case 'partly cloudy':
+        iconData = Icons.wb_cloudy;
+        color = Colors.blueGrey;
+        break;
+      case 'cloudy':
+        iconData = Icons.cloud;
+        color = Colors.grey;
+        break;
+      case 'rainy':
+        iconData = Icons.grain;
+        color = Colors.blue;
+        break;
+      case 'thunderstorm':
+        iconData = Icons.flash_on;
+        color = Colors.amber;
+        break;
+      default:
+        iconData = Icons.wb_sunny;
+        color = Colors.orange;
+    }
+
+    return Icon(iconData, color: color, size: 40);
   }
 }

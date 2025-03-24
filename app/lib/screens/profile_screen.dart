@@ -1,3 +1,4 @@
+//profile_screen.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/user_provider.dart';
@@ -162,10 +163,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
             onPressed: () {
               if (_usernameController.text.isNotEmpty && _emailController.text.isNotEmpty) {
                 userProvider.updateUser(
-                  _usernameController.text,
-                  _emailController.text,
-                  userProvider.user.password,
-                  null,
+                  username: _usernameController.text,
+                  email: _emailController.text,
+                  password: userProvider.user.password,
                 );
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -252,10 +252,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
               if (_currentPasswordController.text == userProvider.user.password) {
                 if (_newPasswordController.text == _confirmPasswordController.text) {
                   userProvider.updateUser(
-                    userProvider.user.username,
-                    userProvider.user.email,
-                    _newPasswordController.text,
-                    null,
+                    username: userProvider.user.username,
+                    email: userProvider.user.email,
+                    password: _newPasswordController.text,
                   );
                   Navigator.pop(context);
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -308,6 +307,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final userProvider = Provider.of<UserProvider>(context);
     return BaseLayout(
       currentIndex: 3,
       child: Consumer<UserProvider>(
@@ -448,5 +448,83 @@ class _ProfileScreenState extends State<ProfileScreen> {
     _newPasswordController.dispose();
     _confirmPasswordController.dispose();
     super.dispose();
+  }
+
+  Widget _buildTextField(String label, TextEditingController controller) {
+    return TextField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: label,
+        filled: true,
+        fillColor: Colors.grey[50],
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+      ),
+    );
+  }
+
+  Widget _buildBadge(String title) {
+    return Chip(
+      label: Text(title, style: const TextStyle(color: Colors.white)),
+      avatar: const Icon(Icons.star, color: Colors.yellow),
+      backgroundColor: const Color(0xFFA3C585),
+    );
+  }
+
+  Widget _buildSettingsTile(IconData icon, String title) {
+    return Card(
+      elevation: 1,
+      margin: const EdgeInsets.only(bottom: 8),
+      child: ListTile(
+        leading: Icon(icon, color: const Color(0xFFA3C585)),
+        title: Text(title),
+        trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+        onTap: () {
+          // Handle settings action
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('$title coming soon!')));
+        },
+      ),
+    );
+  }
+
+  void _showImageSourceDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Select Image Source'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: const Icon(Icons.photo_library),
+                title: const Text('Gallery'),
+                onTap: () {
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Gallery selection coming soon!'),
+                    ),
+                  );
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.camera_alt),
+                title: const Text('Camera'),
+                onTap: () {
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Camera feature coming soon!'),
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 }

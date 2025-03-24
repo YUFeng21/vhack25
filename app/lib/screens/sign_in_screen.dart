@@ -1,3 +1,4 @@
+//sign_in_screen.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/user_provider.dart';
@@ -123,22 +124,14 @@ class SignInScreen extends StatelessWidget {
                       String password = _passwordController.text;
                       UserProvider userProvider = Provider.of<UserProvider>(context, listen: false);
 
-                      if (userProvider.user.username == username && userProvider.user.email == email && userProvider.user.password == password) {
-                        Navigator.pushNamed(context, '/profile');
+                      if (userProvider.user.email == email &&
+                          userProvider.user.password == password) {
+                        Navigator.pushReplacementNamed(context, '/home');
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Row(
-                              children: [
-                                Icon(Icons.error_outline, color: Colors.white),
-                                SizedBox(width: 8),
-                                Text('Please sign up, you haven\'t signed in yet'),
-                              ],
-                            ),
-                            backgroundColor: Colors.red.shade400,
-                            behavior: SnackBarBehavior.floating,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
+                          const SnackBar(
+                            content: Text(
+                              'Invalid credentials or account does not exist',
                             ),
                           ),
                         );
