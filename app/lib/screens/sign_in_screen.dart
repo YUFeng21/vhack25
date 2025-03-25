@@ -1,11 +1,7 @@
-//sign_in_screen.dart
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../providers/user_provider.dart';
-import '../widgets/base_layout.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class SignInScreen extends StatelessWidget {
-  final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
@@ -51,11 +47,24 @@ class SignInScreen extends StatelessWidget {
     );
   }
 
+  Future<void> _signIn(BuildContext context) async {
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+      );
+      Navigator.pushReplacementNamed(context, '/home');
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: ${e.toString()}')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return BaseLayout(
-      currentIndex: 0,
-      child: SingleChildScrollView(
+    return Scaffold(
+      body: SingleChildScrollView(
         child: Column(
           children: [
             Container(
@@ -99,12 +108,6 @@ class SignInScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
                   _buildTextField(
-                    controller: _usernameController,
-                    label: 'Username',
-                    icon: Icons.person_rounded,
-                  ),
-                  SizedBox(height: 16),
-                  _buildTextField(
                     controller: _emailController,
                     label: 'Email',
                     icon: Icons.email_rounded,
@@ -118,25 +121,7 @@ class SignInScreen extends StatelessWidget {
                   ),
                   SizedBox(height: 24),
                   ElevatedButton(
-                    onPressed: () {
-                      String username = _usernameController.text;
-                      String email = _emailController.text;
-                      String password = _passwordController.text;
-                      UserProvider userProvider = Provider.of<UserProvider>(context, listen: false);
-
-                      if (userProvider.user.email == email &&
-                          userProvider.user.password == password) {
-                        Navigator.pushReplacementNamed(context, '/home');
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text(
-                              'Invalid credentials or account does not exist',
-                            ),
-                          ),
-                        );
-                      }
-                    },
+                    onPressed: () => _signIn(context),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.green,
                       foregroundColor: Colors.white,

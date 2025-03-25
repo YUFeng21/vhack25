@@ -9,8 +9,6 @@ import 'screens/sign_up_screen.dart';
 import 'screens/profile_screen.dart';
 import 'screens/chat_screen.dart';
 import 'screens/community_screen.dart';
-import 'screens/chatbot_screen.dart';
-import 'screens/social_screen.dart';
 import 'screens/my_farm_screen.dart';
 import 'screens/my_crops_screen.dart';
 import 'screens/smart_irrigation_screen.dart';
@@ -22,10 +20,13 @@ import 'providers/user_provider.dart';
 import 'providers/post_provider.dart';
 import 'providers/plant_provider.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: "assets/.env");
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform,);
   runApp(
     MultiProvider(
       providers: [
@@ -57,8 +58,6 @@ class MyApp extends StatelessWidget {
         '/profile': (context) => const ProfileScreen(),
         '/farm': (context) => MyFarmScreen(mqttService: Provider.of<MqttService>(context)),
         '/crops': (context) => const MyCropsScreen(),
-        '/agribot': (context) => const ChatbotScreen(),
-        '/agrifriend': (context) => const SocialScreen(),
         '/sign-in': (context) => SignInScreen(),
         '/sign-up': (context) => const SignUpScreen(),
         '/smart_irrigation': (context) => const SmartIrrigationScreen(),

@@ -4,7 +4,6 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import '../providers/post_provider.dart';
 import '../providers/user_provider.dart';
-import '../widgets/base_layout.dart';
 import '../models/post.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
@@ -372,9 +371,8 @@ class _CommunityScreenState extends State<CommunityScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BaseLayout(
-      currentIndex: 2,
-      child: Consumer<PostProvider>(
+    return Scaffold(
+      body: Consumer<PostProvider>(
         builder: (context, postProvider, child) {
           return Padding(
             padding: EdgeInsets.all(16),

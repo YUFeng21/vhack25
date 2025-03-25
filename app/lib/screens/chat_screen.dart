@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'dart:async';
-import '../widgets/base_layout.dart';
 import '../providers/plant_provider.dart';
 import '../providers/user_provider.dart';
 import 'package:intl/intl.dart';
@@ -204,9 +203,8 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BaseLayout(
-      currentIndex: 1,
-      child: Container(
+    return Scaffold(
+      body: Container(
         color: Colors.grey.shade100,
         child: Column(
           children: [

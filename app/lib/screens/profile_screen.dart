@@ -2,7 +2,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/user_provider.dart';
-import '../widgets/base_layout.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -308,9 +307,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final userProvider = Provider.of<UserProvider>(context);
-    return BaseLayout(
-      currentIndex: 3,
-      child: Consumer<UserProvider>(
+    return Scaffold(
+      body: Consumer<UserProvider>(
         builder: (context, userProvider, child) {
           return SingleChildScrollView(
             child: Column(
