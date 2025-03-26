@@ -147,22 +147,6 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
           ),
           SizedBox(width: 8),
-          IconButton(
-            icon: Icon(Icons.image),
-            onPressed: () async {
-              final pickedFile = await _picker.pickImage(
-                source: ImageSource.gallery,
-                imageQuality: 100,
-              );
-
-              if (pickedFile != null) {
-                setState(() {
-                  _selectedImage = pickedFile; // Store the selected image
-                });
-              }
-            },
-            tooltip: 'Upload Image',
-          ),
           Consumer<PlantProvider>(
             builder: (context, plantProvider, child) {
               return IconButton(
